@@ -1,0 +1,1 @@
+export type PetSize = 'SMALL' | 'MEDIUM' | 'LARGE';

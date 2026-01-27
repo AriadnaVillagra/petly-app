@@ -1,97 +1,94 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# 🐾 Petly
 
-# Getting Started
+Petly es una aplicación móvil desarrollada con **React Native** que permite a usuarios reservar turnos para servicios relacionados con el cuidado de mascotas (peluquería, veterinaria, etc.) y realizar pagos desde la app.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+El proyecto está pensado como una **plataforma genérica**, usable por cualquier negocio pet, y construido con una base técnica **escalable, mantenible y profesional**, aplicando **Clean Architecture** y **Redux**.
 
-## Step 1: Start Metro
+---
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## 🎯 Objetivo del proyecto
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+- Permitir a usuarios reservar turnos desde el móvil
+- Integrar pagos dentro de la aplicación (ej. Mercado Pago)
+- Mantener una separación clara de responsabilidades
+- Aplicar principios de **Programación Orientada a Objetos**
+- Facilitar la escalabilidad y el testing
 
-```sh
-# Using npm
-npm start
+---
 
-# OR using Yarn
-yarn start
-```
+## 🧱 Arquitectura
 
-## Step 2: Build and run your app
+Petly sigue los principios de **Clean Architecture**, separando el sistema en capas bien definidas:
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+Presentation (UI + Redux)
+↓
+Application (Use Cases)
+↓
+Domain (Business Rules)
+↓
+Data / Infrastructure (APIs, Storage, Payments)
 
-### Android
+---
 
-```sh
-# Using npm
-npm run android
+## 📁 Estructura del proyecto
 
-# OR using Yarn
-yarn android
-```
+src/
+├── app/
+│   ├── store/
+│   └── navigation/
+├── features/
+│   ├── auth/
+│   ├── booking/
+│   ├── payments/
+│   ├── pets/
+│   └── profile/
+├── shared/
+│   ├── domain/
+│   ├── ui/
+│   ├── utils/
+│   └── constants/
+└── main.tsx
 
-### iOS
+---
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+## 🧠 Capas explicadas
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+### Domain
+Contiene la lógica de negocio pura (entidades, interfaces, casos de uso).
+No depende de React ni Redux.
 
-```sh
-bundle install
-```
+### Application
+Casos de uso que representan acciones del sistema.
 
-Then, and every time you update your native dependencies, run:
+### Data / Infrastructure
+Implementaciones concretas: APIs, pagos, storage.
 
-```sh
-bundle exec pod install
-```
+### Presentation
+Pantallas, componentes y Redux para manejar estado de UI.
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+---
 
-```sh
-# Using npm
-npm run ios
+## 🗂 Redux
 
-# OR using Yarn
-yarn ios
-```
+Redux se usa únicamente para estado de la interfaz:
+loading, errores y datos listos para mostrar.
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+---
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+## 💳 Pagos
 
-## Step 3: Modify your app
+Flujo de pagos:
 
-Now that you have successfully run the app, let's make changes!
+UI → Redux → Use Case → PaymentRepository → API de Pagos
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+---
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+## 🚀 Escalabilidad
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+Arquitectura preparada para crecer, testear y mantener a largo plazo.
 
-## Congratulations! :tada:
+---
 
-You've successfully run and modified your React Native App. :partying_face:
+## 🐶 Petly
 
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+Base sólida para construir aplicaciones reales y profesionales.
