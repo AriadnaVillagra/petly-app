@@ -34,7 +34,6 @@ export class CreatePetUseCase {
             params.size,
             params.photoUrl
         );
-
         await this.petRepository.add(pet);
         return pet;
     }

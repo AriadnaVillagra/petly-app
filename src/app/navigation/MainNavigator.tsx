@@ -38,7 +38,7 @@ export const MainNavigator = () => {
         options={{ title: 'Mis mascotas' }}
       />
       <Stack.Screen
-        name="CreatePetScreen"
+        name="CreatePet"
         component={CreatePetScreen}
         options={{ title: 'Crear mascota' }}
       />

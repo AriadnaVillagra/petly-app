@@ -19,6 +19,8 @@ export class DashboardRepositoryMock implements DashboardRepository {
     ? new DashboardNextBooking(
       active[0].id,
       active[0].service.name,
+      active[0].petName,
+      active[0].petSize,
       active[0].date,
       active[0].time,
       active[0].price,

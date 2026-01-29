@@ -1,3 +1,4 @@
+import { PetSize } from '../../../../shared/types/PetSizes';
 import { Booking } from '../../domain/entities/Booking';
 import { Service } from '../../domain/entities/Service';
 import { BookingRepository } from '../../domain/repositories/BookingRepository';
@@ -5,6 +6,8 @@ import { BookingRepository } from '../../domain/repositories/BookingRepository';
 export interface CreateBookingParams {
   id: string;
   petId: string;
+  petName: string;
+  petSize: PetSize;
   userId: string;
   service: Service;
   date: string;
@@ -20,6 +23,8 @@ export class CreateBooking {
     const booking = new Booking(
       params.id,
       params.petId,
+      params.petName,
+      params.petSize,
       params.userId,
       params.service,
       params.date,

@@ -37,6 +37,8 @@ export class DashboardNextBooking {
   constructor(
     public readonly id: string,
     public readonly serviceName: string,
+    public readonly petName: string,
+    public readonly petSize: string,
     public readonly date: string,
     public readonly time: string,
     public readonly price: number,

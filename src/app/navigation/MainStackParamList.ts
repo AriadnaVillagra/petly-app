@@ -5,5 +5,5 @@ export type MainStackParamList = {
   CreateBooking: undefined;
   BookingHistory: undefined;
   PetsList: undefined;
-  CreatePetScreen: undefined;
+  CreatePet: undefined;
 };

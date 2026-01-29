@@ -7,6 +7,8 @@ export class BookingMapper {
     return {
       id: booking.id,
       petId: booking.petId,
+      petName: booking.petName,
+      petSize: booking.petSize,
       serviceId: booking.service.id,
       serviceName: booking.service.name,
       price: booking.price,

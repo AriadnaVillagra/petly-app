@@ -1,6 +1,7 @@
 // application/dto/DashboardDto.ts
 
 import { BookingStatus } from "../../../../shared/types/BookingStatus";
+import { PetSize } from "../../../../shared/types/PetSizes";
 
 export interface DashboardDto {
   nextBooking: DashboardNextBookingDto | null;
@@ -16,6 +17,8 @@ export interface DashboardDto {
 export interface DashboardNextBookingDto {
   id: string;
   serviceName: string;
+  petName: string;
+  petSize: PetSize;
   date: string;
   time: string;
   price: number;
