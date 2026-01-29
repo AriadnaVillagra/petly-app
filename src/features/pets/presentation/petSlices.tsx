@@ -1,8 +1,7 @@
 // src/features/pets/presentation/petSlice.ts
 
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { isRejected } from '@reduxjs/toolkit';
-import { createPetUseCase, deletePetUseCase, getPetsByOwnerUseCase, updatePetUseCase } from '../../../app/di/pets';
+import { petsUseCse } from '../../../app/di/pets';
 import { PetDTO } from '../application/dto/PetDto';
 import { PetMapper } from '../application/mapper/petMapper';
 import { CreatePetParams } from '../application/usecases/petUsecases';
@@ -26,7 +25,7 @@ export const fetchPetsByOwner = createAsyncThunk<
     string
 >('pets/fetchByOwner',
     async (ownerId: string) => {
-        const pets = await getPetsByOwnerUseCase.execute(ownerId);
+        const pets = await petsUseCse.getPetsByOwner.execute(ownerId);
         return pets.map(PetMapper.toDTO);
     });
 
@@ -34,9 +33,13 @@ export const fetchPetsByOwner = createAsyncThunk<
 export const createPet = createAsyncThunk<
     PetDTO,
     CreatePetParams
->('pets/create', async payload => {
-    const pet = await createPetUseCase.execute(payload);
-    return PetMapper.toDTO(pet);
+>('pets/create', async (payload, { rejectWithValue }) => {
+    try {
+        const pet = await petsUseCse.createPet.execute(payload);
+        return PetMapper.toDTO(pet);
+    } catch (error: any) {
+        return rejectWithValue(error?.message ?? 'Error creando mascota');
+    }
 });
 
 export const updatePet = createAsyncThunk<
@@ -52,7 +55,7 @@ export const updatePet = createAsyncThunk<
         petDto.photoUrl
     );
 
-    const updated = await updatePetUseCase.execute(pet);
+    const updated = await petsUseCse.updatePet.execute(pet);
     return PetMapper.toDTO(updated);
 });
 
@@ -60,7 +63,7 @@ export const deletePet = createAsyncThunk<
     void,
     { petId: string; ownerId: string }
 >('pets/delete', async ({ petId, ownerId }, { dispatch }) => {
-    await deletePetUseCase.execute(petId);
+    await petsUseCse.deletePet.execute(petId);
     dispatch(fetchPetsByOwner(ownerId));
 });
 
@@ -72,26 +75,30 @@ const petsSlice = createSlice({
     extraReducers: builder => {
         builder
             // FETCH
-            .addCase(fetchPetsByOwner.pending, state => {
-                state.loading = true;
-            })
             .addCase(fetchPetsByOwner.fulfilled, (state, action: PayloadAction<PetDTO[]>) => {
                 state.pets = action.payload;
-                state.loading = false;
             })
             .addCase(fetchPetsByOwner.rejected, (state, action) => {
-                state.loading = false;
                 state.error = action.error.message;
             })
-
+            // CREATE
+            .addCase(createPet.pending, state => {
+                state.loading = true;
+            })
             .addCase(createPet.fulfilled, (state, action) => {
+                state.loading = false;
                 state.pets.push(action.payload);
             })
+            .addCase(createPet.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+            // UPDATE
             .addCase(updatePet.fulfilled, (state, action) => {
                 const index = state.pets.findIndex(p => p.id === action.payload.id);
                 if (index !== -1) state.pets[index] = action.payload;
-            })
-    },
+            });
+},
 });
 
 

@@ -1,5 +1,6 @@
 // application/mapper/DashboardMapper.ts
 
+import { PetSize } from '../../../../shared/types/PetSizes';
 import { Dashboard } from '../../domain/entities/Dashboard';
 import { DashboardDto } from '../dto/DashboardDto';
 
@@ -10,6 +11,8 @@ export class DashboardMapper {
         ? {
             id: dashboard.nextBooking.id,
             serviceName: dashboard.nextBooking.serviceName,
+            petName: dashboard.nextBooking.petName,
+            petSize: dashboard.nextBooking.petSize as PetSize,
             date: dashboard.nextBooking.date,
             time: dashboard.nextBooking.time,
             price: dashboard.nextBooking.price,

@@ -1,3 +1,5 @@
+// src/features/dashboard/presentation/screens/DashboardScreen.tsx
+
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Button } from 'react-native';
 import { fetchDashboard } from '../dashboardSlice';
@@ -5,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '../../../../app/store/hooks';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../../../../app/navigation/MainStackParamList';
+import { logout } from '../../../auth/presentation/authSlice';
 
 type DashboardNavigationProp =
   NativeStackNavigationProp<MainStackParamList, 'Dashboard'>;
@@ -52,12 +55,26 @@ export const DashboardScreen = () => {
       {nextBooking ? (
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Próximo turno</Text>
-          <Text>Servicio: {nextBooking.serviceName}</Text>
+
           <Text>
-            {nextBooking.date} a las {nextBooking.time}
+            🐶 Mascota: {nextBooking.petName} ({nextBooking.petSize})
           </Text>
-          <Text>Precio: ${nextBooking.price}</Text>
-          <Text>Estado: {nextBooking.status}</Text>
+
+          <Text>
+            ✂️ Servicio: {nextBooking.serviceName}
+          </Text>
+
+          <Text>
+            📅 {nextBooking.date} a las {nextBooking.time}
+          </Text>
+
+          <Text>
+            💰 Precio: ${nextBooking.price}
+          </Text>
+
+          <Text>
+            📌 Estado: {nextBooking.status}
+          </Text>
         </View>
       ) : (
         <View style={styles.card}>
@@ -65,12 +82,13 @@ export const DashboardScreen = () => {
         </View>
       )}
 
+
       {/* Acciones */}
-      <Button
-        title="Mis mascotas"
-        onPress={() => navigation.navigate('PetsList')}
-      />
       <View style={styles.actions}>
+        <Button
+          title="Mis mascotas"
+          onPress={() => navigation.navigate('PetsList')}
+        />
         <Button
           title="Crear booking"
           onPress={() => navigation.navigate('CreateBooking')}
@@ -88,7 +106,14 @@ export const DashboardScreen = () => {
         <Text>Confirmados: {data.stats.confirmed}</Text>
         <Text>Pagados: {data.stats.paid}</Text>
       </View>
+
+      <Button
+        title="Cerrar sesión"
+        onPress={() => dispatch(logout())}
+      />
     </View>
+
+
   );
 };
 
@@ -96,6 +121,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    justifyContent: 'space-between',
   },
   center: {
     flex: 1,

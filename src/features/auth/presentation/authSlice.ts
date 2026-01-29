@@ -49,6 +49,13 @@ export const login = createAsyncThunk<
   }
 );
 
+export const logout = createAsyncThunk(
+  'auth/logout',
+  async () => {
+    await authUseCases.logout();
+  }
+);
+
 export const register = createAsyncThunk<
   UserDTO,
   { name: string; email: string; password: string }
@@ -68,9 +75,19 @@ export const resendConfirmationCode = createAsyncThunk<
   void,
   { email: string }
 >('auth/resendConfirmationCode', async ({ email }) => {
-  console.log('🧠 Thunk → resendConfirmationCode email:', email);
   await authUseCases.resendConfirmationCode(email);
 });
+
+export const bootstrapAuth = createAsyncThunk<
+  UserDTO | null
+>(
+  'auth/bootstrap',
+  async () => {
+    const user = await authUseCases.getCurrentUser();
+    if (!user) return null;
+    return UserMapper.toDTO(user);
+  }
+);
 
 /* =========================
    Slice
@@ -94,6 +111,8 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action: PayloadAction<UserDTO>) => {
         state.loading = false;
         state.user = action.payload;
+        state.requiresConfirmation = false;
+        state.emailToConfirm = null;
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
@@ -139,9 +158,36 @@ const authSlice = createSlice({
       .addCase(resendConfirmationCode.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message ?? 'Error al reenviar código de confirmación';
+      })
+
+      // BOOTSTRAP AUTH
+      .addCase(bootstrapAuth.pending, state => {
+        state.loading = true;
+      })
+      .addCase(bootstrapAuth.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(bootstrapAuth.rejected, state => {
+        state.loading = false;
+        state.user = null;
+      })
+
+      // LOGOUT
+      .addCase(logout.pending, state => {
+        state.loading = true;
+      })
+      .addCase(logout.fulfilled, state => {
+        state.loading = false;
+        state.user = null;
+        state.error = null;
+        state.requiresConfirmation = false;
+        state.emailToConfirm = null;
+      })
+      .addCase(logout.rejected, state => {
+        state.loading = false;
       });
   },
 });
 
-export const { logout } = authSlice.actions;
 export const authReducer = authSlice.reducer;

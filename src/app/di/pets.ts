@@ -11,7 +11,9 @@ const petRepository =
     ? new PetRepositoryMock()
     : new PetRepositoryMock(); // temporal
 
-export const getPetsByOwnerUseCase = new GetPetsByOwnerUseCase(petRepository);
-export const createPetUseCase = new CreatePetUseCase(petRepository);
-export const updatePetUseCase = new UpdatePetUseCase(petRepository);
-export const deletePetUseCase = new DeletePetUseCase(petRepository);
+export const petsUseCse = {
+  createPet: new CreatePetUseCase(petRepository),
+  getPetsByOwner: new GetPetsByOwnerUseCase(petRepository),
+  updatePet: new UpdatePetUseCase(petRepository),
+  deletePet: new DeletePetUseCase(petRepository),
+}

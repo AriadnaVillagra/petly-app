@@ -1,4 +1,5 @@
 import { BookingStatus } from '../../../../shared/types/BookingStatus';
+import { PetSize } from '../../../../shared/types/PetSizes';
 import { Service } from './Service';
 
 
@@ -7,6 +8,8 @@ export class Booking {
   constructor(
     public readonly id: string,
     public readonly petId: string,
+    public readonly petName: string,
+    public readonly petSize: PetSize,
     public readonly userId: string,
     public readonly service: Service,
     public readonly date: string,
@@ -24,6 +27,8 @@ export class Booking {
     return new Booking(
       this.id,
       this.petId,
+      this.petName,
+      this.petSize,
       this.userId,
       this.service,
       this.date,
@@ -38,6 +43,8 @@ export class Booking {
     return new Booking(
       this.id,
       this.petId,
+      this.petName,
+      this.petSize,
       this.userId,
       this.service,
       this.date,

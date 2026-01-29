@@ -40,6 +40,8 @@ export const BookingHistoryScreen = () => {
   const renderItem = ({ item }: { item: BookingDTO }) => (
     <View style={styles.card}>
       <Text style={styles.service}>{item.serviceName}</Text>
+      <Text>Mascota: {item.petName}</Text>
+      <Text>Tamaño: {item.petSize}</Text>
       <Text>
         {item.date} · {item.time}
       </Text>

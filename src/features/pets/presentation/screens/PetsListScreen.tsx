@@ -1,33 +1,31 @@
+// src/features/pets/presentation/screens/PetsListScreen.tsx
+
 import React, { useEffect } from 'react';
 import { View, Text, FlatList, Button, StyleSheet } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../../../../app/store/hooks';
-import { fetchPetsByOwner } from '../pethSlices';
+import { MainStackParamList } from '../../../../app/navigation/MainStackParamList';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 
-interface Props {
-  navigation: any;
-}
+type PetsListNavigationProp =
+  NativeStackNavigationProp<MainStackParamList, 'PetsList'>;
 
-export const PetsListScreen = ({ navigation }: Props) => {
+export const PetsListScreen = () => {
+  const { pets } = useAppSelector(state => state.pets);
+  const navigation = useNavigation<PetsListNavigationProp>();
   const dispatch = useAppDispatch();
-  const { pets, loading } = useAppSelector(state => state.pets);
-
-  const userId = 'user-1'; // luego vendrá de auth
 
   useEffect(() => {
-    dispatch(fetchPetsByOwner(userId));
-  }, [userId]);
+    // si ya los tenés cargados, esto puede ser opcional
+    //dispatch(fetchBookings());
+  }, [dispatch]);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>🐾 Mis mascotas</Text>
 
-      {loading && <Text>Cargando...</Text>}
-
-      {!loading && pets.length === 0 && (
-        <View style={styles.empty}>
-          <Text>No tenés mascotas cargadas todavía.</Text>
-          <Text>Agregá una para poder reservar turnos 🐶🐱</Text>
-        </View>
+      {pets.length === 0 && (
+        <Text>No tenés mascotas cargadas todavía.</Text>
       )}
 
       <FlatList
@@ -35,9 +33,8 @@ export const PetsListScreen = ({ navigation }: Props) => {
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
           <View style={styles.card}>
-            <Text style={styles.name}>{item.name}</Text>
+            <Text>{item.name}</Text>
             <Text>{item.breed}</Text>
-            <Text>Tamaño: {item.size}</Text>
           </View>
         )}
       />
@@ -49,7 +46,6 @@ export const PetsListScreen = ({ navigation }: Props) => {
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {

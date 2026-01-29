@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, Modal, Pressable, Alert } from 'react-native';
+import { View, Text, Button, Modal, Pressable } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../../../../app/store/hooks';
 import { cancelBooking, confirmBooking, createBooking } from '../bookingSlices';
-import { BookingList } from '../components/BookingList';
 import { ServiceSelector } from '../components/ServiceSelector';
 import { SERVICES } from '../constants/services';
 import { Service } from '../../domain/entities/Service';
@@ -11,6 +10,8 @@ import { getServiceDurationMinutes } from '../../domain/utils/serviceDuration';
 import { getAvailableStartTimesWithBookings } from '../../domain/utils/scheduling';
 import { fetchDashboard } from '../../../dashboard/presentation/dashboardSlice';
 import { PetSize } from '../../../../shared/types/PetSizes';
+import { fetchPetsByOwner } from '../../../pets/presentation/petSlices';
+import { PetDTO } from '../../../pets/application/dto/PetDto';
 
 
 
@@ -18,7 +19,8 @@ export const CreateBookingScreen = () => {
   const dispatch = useAppDispatch();
   const loading = useAppSelector(state => state.booking.loading);
   const bookings = useAppSelector(state => state.booking.bookings);
-  const petSize: PetSize = 'MEDIUM';
+  const pets = useAppSelector(state => state.pets.pets);
+  const user = useAppSelector(state => state.auth.user);
 
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedTime, setSelectedTime] = useState<string>('');
@@ -26,29 +28,35 @@ export const CreateBookingScreen = () => {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [showTimeModal, setShowTimeModal] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [selectedPet, setSelectedPet] = useState<PetDTO | null>(null);
+
+  const petSize: PetSize | null = selectedPet?.size ?? null;
 
   useEffect(() => {
-    console.log('🧼 selectedService:', selectedService);
     setSelectedTime('');
+    if (user) {
+      dispatch(fetchPetsByOwner(user.id));
+    }
   }, [selectedService]);
 
 
-const handleConfirm = async (id: string) => {
-  await dispatch(confirmBooking(id)).unwrap();
-  dispatch(fetchDashboard());
-};
+  const handleConfirm = async (id: string) => {
+    await dispatch(confirmBooking(id)).unwrap();
+    dispatch(fetchDashboard());
+  };
 
-const handleCancel = async (id: string) => {
-  await dispatch(cancelBooking(id)).unwrap();
-  dispatch(fetchDashboard());
-};
+  const handleCancel = async (id: string) => {
+    await dispatch(cancelBooking(id)).unwrap();
+    dispatch(fetchDashboard());
+  };
   const activeBookings = bookings.filter(
     b => b.status !== 'CANCELLED'
   );
 
-  const durationMinutes = selectedService
-    ? getServiceDurationMinutes(selectedService.type, petSize)
-    : null;
+  const durationMinutes =
+    selectedService && petSize
+      ? getServiceDurationMinutes(selectedService.type, petSize)
+      : null;
 
   const availableTimes =
     selectedService && selectedDate && durationMinutes
@@ -60,14 +68,15 @@ const handleCancel = async (id: string) => {
       : [];
 
   const handleCreateBooking = () => {
-    console.log('🧼 CREANDO booking con:', selectedService);
-    if (!selectedService || !selectedDate || !selectedTime) return;
+    if (!selectedService || !selectedDate || !selectedTime || !selectedPet) return;
 
     dispatch(
       createBooking({
         id: Date.now().toString(),
-        petId: 'pet-1',
-        userId: 'user-1',
+        petId: selectedPet.id,
+        petName: selectedPet.name,
+        petSize: selectedPet.size,
+        userId: user?.id ?? '',
         service: selectedService,
         date: selectedDate,
         time: selectedTime,
@@ -82,6 +91,7 @@ const handleCancel = async (id: string) => {
 
   const canOpenTimeModal =
     !!selectedService &&
+    !!selectedPet &&
     !!selectedDate &&
     availableTimes.length > 0;
 
@@ -95,11 +105,45 @@ const handleCancel = async (id: string) => {
           ? 'Sin horarios disponibles'
           : 'Seleccionar horario';
 
+
+
   return (
     <View style={{ flex: 1, padding: 24 }}>
       <Text style={{ fontSize: 22, marginBottom: 16 }}>
         🐾 Crear Booking
       </Text>
+
+      <Text style={{ marginTop: 16, fontWeight: '600' }}>
+        🐶 Seleccioná una mascota
+      </Text>
+
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+        {pets.map(pet => (
+          <Pressable
+            key={pet.id}
+            onPress={() => setSelectedPet(pet)}
+            style={{
+              padding: 10,
+              margin: 6,
+              borderRadius: 8,
+              backgroundColor:
+                selectedPet?.id === pet.id ? '#4CAF50' : '#E0E0E0',
+            }}
+          >
+            <Text
+              style={{
+                color: selectedPet?.id === pet.id ? 'white' : 'black',
+                fontWeight: '600',
+              }}
+            >
+              {pet.name}
+            </Text>
+            <Text style={{ fontSize: 12 }}>
+              {pet.breed} · {pet.size}
+            </Text>
+          </Pressable>
+        ))}
+      </View>
 
       {/* Selector de servicio */}
       <ServiceSelector
@@ -180,8 +224,6 @@ const handleCancel = async (id: string) => {
                 </Pressable>
               ))}
             </View>
-
-
             <Button
               title="Cancelar"
               onPress={() => setShowTimeModal(false)}
@@ -227,32 +269,12 @@ const handleCancel = async (id: string) => {
         onPress={handleCreateBooking}
         disabled={
           !selectedService ||
+          !selectedPet ||
           !selectedDate ||
           !selectedTime ||
           loading
         }
       />
-
-      <Text style={{ marginVertical: 12 }}>
-        Total bookings: {bookings.length}
-      </Text>
-
-      <View style={{ flex: 1 }}>
-        <BookingList
-          bookings={bookings}
-          onConfirm={handleConfirm}
-          onCancel={handleCancel}
-        />
-      </View>
-
-      <Text style={{ marginTop: 16, fontWeight: 'bold' }}>
-        DEBUG BOOKINGS
-      </Text>
-      {bookings.map(b => (
-        <Text key={b.id}>
-          {b.date} {b.time} – {b.status}
-        </Text>
-      ))}
     </View>
   );
 };
