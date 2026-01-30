@@ -1,3 +1,4 @@
+// apps/mobile/tsconfig.json
 {
   "extends": "@react-native/typescript-config",
   "compilerOptions": {

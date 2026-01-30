@@ -1,15 +1,8 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  StyleSheet,
-  ActivityIndicator,
-  Pressable,
-} from 'react-native';
-import { login } from '../authSlice';
+import { ActivityIndicator, Button, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../../app/store/hooks';
+import { login } from '../authSlice';
+
 
 export const LoginScreen = ({ onGoRegister, onGoConfirm }: {
   onGoRegister?: () => void;
