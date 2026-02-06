@@ -18,7 +18,7 @@ export class CreateBookingUseCase {
             userId,
             {
                 id: dto.serviceId,
-                name: dto.petName,
+                name: dto.serviceName,
                 basePrice: dto.price,
                 type: type
             },
