@@ -134,6 +134,9 @@ src/
 
 ---
 
+This repository uses in-memory repositories by design.
+Production persistence and infrastructure are intentionally excluded.
+
 ## 👩‍💻 Autora
 
 Ariadna Villagra
