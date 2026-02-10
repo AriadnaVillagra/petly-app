@@ -11,8 +11,6 @@ import {
 } from "../../application/usecases/PetUsecases";
 import { Param } from "../../infrastructure/http/types";
 
-const MOCK_USER_ID = "mock-user-123";
-
 export class PetController {
     constructor(
         private createPet: CreatePetUseCase,
@@ -24,7 +22,8 @@ export class PetController {
 
     async create(req: Request, res: Response) {
         try {
-            const pet = await this.createPet.execute(req.body, MOCK_USER_ID);
+            const userId = req.auth!.sub;
+            const pet = await this.createPet.execute(req.body, userId);
             res.status(201).json(pet);
         } catch (error: any) {
             res.status(400).json({ message: error.message });
@@ -33,14 +32,15 @@ export class PetController {
 
     async getByOwner(req: Request, res: Response) {
         try {
-            const pets = await this.getPetsByOwner.execute(MOCK_USER_ID);
+            const userId = req.auth!.sub;
+            const pets = await this.getPetsByOwner.execute(userId);
             res.status(200).json(pets);
         } catch (error: any) {
             res.status(400).json({ message: error.message });
         }
     }
 
-    async getById(req: Request<Param<"petId">>, res: Response) {
+    async getById(req: Request, res: Response) {
         try {
             const petId = req.params.petId;
             const pet = await this.getPetById.execute(petId);
@@ -54,20 +54,22 @@ export class PetController {
         }
     }
 
-    async update(req: Request<Param<"petId">>, res: Response) {
+    async update(req: Request, res: Response) {
         try {
+            const userId = req.auth!.sub;
             const petId = req.params.petId;
-            const pet = await this.updatePet.execute(petId, req.body, MOCK_USER_ID);
+            const pet = await this.updatePet.execute(petId, req.body, userId);
             res.status(200).json(pet);
         } catch (error: any) {
             res.status(400).json({ message: error.message });
         }
     }
 
-    async delete(req: Request<Param<"petId">>, res: Response) {
+    async delete(req: Request, res: Response) {
         try {
+            const userId = req.auth!.sub;
             const petId = req.params.petId;
-            await this.deletePet.execute(petId, MOCK_USER_ID);
+            await this.deletePet.execute(petId, userId);
             res.status(204).send();
         } catch (error: any) {
             res.status(400).json({ message: error.message });

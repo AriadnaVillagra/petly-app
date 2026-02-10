@@ -9,24 +9,25 @@ import crypto from "crypto";
 export class CreateBookingUseCase {
     constructor(private bookingRepo: BookingRepository) { }
 
-    async execute(dto: BookingDTO, userId: string, petId: string, type: ServiceType): Promise<Booking> {
+    async execute(dto: BookingDTO, userId: string): Promise<Booking> {
         const booking = new Booking(
             crypto.randomUUID(),
-            petId,
+            dto.petId,
             dto.petName,
             dto.petSize,
             userId,
             {
                 id: dto.serviceId,
-                name: dto.petName,
+                name: dto.serviceName,
                 basePrice: dto.price,
-                type: type
+                type: dto.serviceType
             },
             dto.date,
             dto.time,
             dto.durationMinutes,
             dto.status
         );
+
 
         return this.bookingRepo.create(booking);
     }

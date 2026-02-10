@@ -1,3 +1,5 @@
+// domain/repositories/AuthRepository.ts
+
 import { User } from '../entities/User';
 
 export interface AuthRepository {

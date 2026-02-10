@@ -10,8 +10,6 @@ import {
     DeleteBookingUseCase,
 } from "../../application/usecases/BookingUsecases";
 
-const MOCK_USER_ID = "mock-user-123"; // En un caso real, este ID vendría del middleware de autenticación después de verificar el token del usuario
-
 export class BookingController {
     constructor(
         private createBooking: CreateBookingUseCase,
@@ -23,14 +21,12 @@ export class BookingController {
 
     create = async (req: Request, res: Response) => {
         try {
-            const userId = MOCK_USER_ID;
+            const userId = req.auth!.sub;
             const petId = req.body.petId;
 
             const booking = await this.createBooking.execute(
                 req.body,
                 userId,
-                petId,
-                req.body.serviceType
             );
 
             res.status(201).json(booking);
@@ -39,6 +35,9 @@ export class BookingController {
 
         }
     };
+
+    // NOTE: This endpoint intentionally returns bookings from all users.
+    // In the future, it will be restricted to ADMIN users only.
 
     getAll = async (_req: Request, res: Response) => {
         try {

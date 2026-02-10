@@ -2,27 +2,28 @@
 
 import { Router } from "express";
 import { bookingController } from "../../infrastructure/config/booking.composition";
+import { authMiddleware } from "../middleware/AuthMiddleware";
 
 const router = Router();
 
 // CREATE
-router.post("/bookings", (req, res) => bookingController.create(req, res)
+router.post("/bookings", authMiddleware, (req, res) => bookingController.create(req, res)
 );
 
 // GET all bookings for authenticated user
-router.get("/bookings", (req, res) => bookingController.getAll(req, res)
+router.get("/bookings", authMiddleware, (req, res) => bookingController.getAll(req, res)
 );
 
 // GET by id
-router.get("/bookings/:bookingId", (req, res) => bookingController.getById(req, res)
+router.get("/bookings/:bookingId", authMiddleware, (req, res) => bookingController.getById(req, res)
 );
 
 // UPDATE status
-router.patch("/bookings/:bookingId/status", (req, res) => bookingController.updateStatus(req, res)
+router.patch("/bookings/:bookingId/status", authMiddleware, (req, res) => bookingController.updateStatus(req, res)
 );
 
 // DELETE (cancel booking)
-router.delete("/bookings/:bookingId", (req, res) => bookingController.delete(req, res)
+router.delete("/bookings/:bookingId", authMiddleware, (req, res) => bookingController.delete(req, res)
 );
 
 export default router;

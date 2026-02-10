@@ -2,11 +2,9 @@
 // src/infrastructure/config/booking.composition.ts
 
 
-import { BookingMemoryRepository } from "../persistence/BookingMemoryRepository";
 import { BookingController } from "../../interfaces/controller/BookingController";
 import { CreateBookingUseCase, DeleteBookingUseCase, GetBookingByIdUseCase, ListBookingsUseCase, UpdateBookingStatusUseCase } from "../../application/usecases/BookingUsecases";
-
-const bookingRepository = new BookingMemoryRepository();
+import { bookingRepository } from "../persistence";
 
 const createBooking = new CreateBookingUseCase(bookingRepository);
 const getAllBookings = new ListBookingsUseCase(bookingRepository);

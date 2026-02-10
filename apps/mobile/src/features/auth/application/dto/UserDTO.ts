@@ -1,3 +1,5 @@
+// application/dto/UserDTO.ts
+
 export interface UserDTO {
   id: string;
   name: string;
