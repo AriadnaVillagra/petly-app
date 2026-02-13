@@ -20,11 +20,8 @@ const initialState: DashboardState = {
 
 export const fetchDashboard = createAsyncThunk(
   'dashboard/fetchDashboard',
-  async (_, { getState }) => {
-    const state = getState() as RootState;
-    const bookings = state.booking.bookings;
-
-    const dashboard = await dashboardUseCase.execute(bookings);
+  async () => {
+    const dashboard = await dashboardUseCase.execute();
     return DashboardMapper.toDto(dashboard);
   }
 );

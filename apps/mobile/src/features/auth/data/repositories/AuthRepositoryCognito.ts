@@ -18,6 +18,7 @@ const userPool = new CognitoUserPool({
 });
 
 export class AuthRepositoryCognito implements AuthRepository {
+
   async resendConfirmationCode(email: string): Promise<void> {
     console.log('🔐 Repo → resendConfirmationCode email:', email);
     const cognitoUser = new CognitoUser({
@@ -56,6 +57,7 @@ export class AuthRepositoryCognito implements AuthRepository {
   }
 
   async login(email: string, password: string): Promise<User> {
+
     const authDetails = new AuthenticationDetails({
       Username: email,
       Password: password,
@@ -69,13 +71,18 @@ export class AuthRepositoryCognito implements AuthRepository {
     return new Promise((resolve, reject) => {
       cognitoUser.authenticateUser(authDetails, {
         onSuccess: session => {
-          const idToken = session.getIdToken().payload;
+          console.log('ID TOKEN:', session.getIdToken().getJwtToken());
+          console.log('ACCESS TOKEN:', session.getAccessToken().getJwtToken());
+          const idTokenPayload = session.getIdToken().payload;
+          const jwt = session.getAccessToken().getJwtToken();
 
           resolve(
             new User(
-              idToken.sub,
-              idToken.name ?? 'Usuario',
-              idToken.email
+              idTokenPayload.sub,
+              idTokenPayload.name ?? 'Usuario',
+              idTokenPayload.email,
+              undefined,
+              jwt
             )
           );
         },
@@ -155,6 +162,46 @@ export class AuthRepositoryCognito implements AuthRepository {
             )
           );
         });
+    });
+  }
+
+  async forgotPassword(email: string): Promise<void> {
+    const cognitoUser = new CognitoUser({
+      Username: email,
+      Pool: userPool,
+    });
+
+    return new Promise((resolve, reject) => {
+      cognitoUser.forgotPassword({
+        onSuccess: () => {
+          resolve();
+        },
+        onFailure: err => {
+          reject(err);
+        },
+      });
+    });
+  }
+
+  async confirmForgotPassword(
+    email: string,
+    code: string,
+    newPassword: string
+  ): Promise<void> {
+    const cognitoUser = new CognitoUser({
+      Username: email,
+      Pool: userPool,
+    });
+
+    return new Promise((resolve, reject) => {
+      cognitoUser.confirmPassword(code, newPassword, {
+        onSuccess: () => {
+          resolve();
+        },
+        onFailure: err => {
+          reject(err);
+        },
+      });
     });
   }
 }

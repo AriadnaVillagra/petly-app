@@ -1,5 +1,4 @@
 // src/server.ts
-
 import { app } from "./app";
 
 const PORT = 3000;

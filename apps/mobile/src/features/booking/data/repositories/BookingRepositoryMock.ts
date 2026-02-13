@@ -1,7 +1,13 @@
+// src/features/booking/data/repositories/BookingRepositoryMock.ts
+// we dont use the mapper because this is a mock repository dont saves anything to the backend, just in memory, so we can use the domain model directly
+
 import { Booking } from '../../domain/entities/Booking';
 import { BookingRepository } from '../../domain/repositories/BookingRepository';
 
 export class BookingRepositoryMock implements BookingRepository {
+  delete(id: string): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
   private bookings: Booking[] = [];
 
   async create(booking: Booking): Promise<Booking> {

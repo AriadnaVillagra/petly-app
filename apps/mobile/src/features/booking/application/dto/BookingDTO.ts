@@ -1,3 +1,6 @@
+// src/features/booking/application/dto/BookingDTO.ts
+//DTO used in redux and api implementations
+
 import { BookingStatus } from "../../../../shared/types/BookingStatus";
 import { PetSize } from "../../../../shared/types/PetSizes";
 

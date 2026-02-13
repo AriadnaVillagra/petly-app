@@ -1,6 +1,7 @@
 // domain/entities/Dashboard.ts
 
 import { BookingStatus } from "../../../../shared/types/BookingStatus";
+import { PetSize } from "../../../../shared/types/PetSizes";
 
 
 export class Dashboard {
@@ -38,7 +39,7 @@ export class DashboardNextBooking {
     public readonly id: string,
     public readonly serviceName: string,
     public readonly petName: string,
-    public readonly petSize: string,
+    public readonly petSize: PetSize,
     public readonly date: string,
     public readonly time: string,
     public readonly price: number,

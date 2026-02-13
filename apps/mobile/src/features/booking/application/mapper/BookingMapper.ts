@@ -18,4 +18,26 @@ export class BookingMapper {
       status: booking.status,
     };
   }
+
+
+  static toDomain(dto: any): Booking {
+    return new Booking(
+      dto.id,
+      dto.petId,
+      dto.petName,
+      dto.petSize,
+      dto.userId ?? '',
+      {
+        id: dto.service?.id ?? dto.serviceId,
+        name: dto.service?.name ?? dto.serviceName
+      },
+      dto.service?.basePrice ?? dto.price,
+      dto.date,
+      dto.time,
+      dto.durationMinutes,
+      dto.status
+    );
+  }
+
+
 }

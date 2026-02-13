@@ -7,6 +7,7 @@ import {
   DASHBOARD_PROVIDER,
   BOOKING_PROVIDER,
   PETS_PROVIDER,
+  API_BASE_URL,
 } from '@env';
 
 export const ENV = {
@@ -17,4 +18,6 @@ export const ENV = {
   DASHBOARD_PROVIDER,
   BOOKING_PROVIDER,
   PETS_PROVIDER,
+  API_BASE_URL,
 };
+

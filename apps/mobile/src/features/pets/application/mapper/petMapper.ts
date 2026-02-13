@@ -15,4 +15,16 @@ export class PetMapper {
             photoUrl: pet.photoUrl,
         };
     };
+
+    static toDomain(dto: PetDTO): Pet {
+        return new Pet(
+            dto.id,
+            dto.ownerId,
+            dto.name,
+            dto.breed,
+            dto.size,
+            dto.photoUrl
+        );
+    }
+
 }

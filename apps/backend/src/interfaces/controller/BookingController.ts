@@ -28,7 +28,7 @@ export class BookingController {
                 req.body,
                 userId,
             );
-
+            console.log(req.body);
             res.status(201).json(booking);
         } catch (error) {
             res.status(400).json({ message: (error as Error).message });

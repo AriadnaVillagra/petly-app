@@ -2,6 +2,12 @@ import { AuthRepository } from '../../domain/repositories/AuthRepository';
 import { User } from '../../domain/entities/User';
 
 export class AuthRepositoryMock implements AuthRepository {
+  forgotPassword(email: string): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  confirmForgotPassword(email: string, code: string, newPassword: string): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
   resendConfirmationCode(email: string): Promise<void> {
     // Mock: asumimos que siempre reenvía bien
     return Promise.resolve();

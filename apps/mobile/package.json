@@ -17,6 +17,7 @@
     "@react-navigation/native-stack": "^7.10.1",
     "@reduxjs/toolkit": "^2.11.2",
     "amazon-cognito-identity-js": "^6.3.16",
+    "axios": "^1.13.5",
     "react": "19.2.0",
     "react-native": "0.83.1",
     "react-native-dotenv": "^3.4.11",

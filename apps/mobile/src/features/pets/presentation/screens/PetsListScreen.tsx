@@ -1,11 +1,12 @@
 // src/features/pets/presentation/screens/PetsListScreen.tsx
 
-import React, { useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { View, Text, FlatList, Button, StyleSheet } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../../../../app/store/hooks';
 import { MainStackParamList } from '../../../../app/navigation/MainStackParamList';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { fetchPetsByOwner } from '../petSlices';
 
 type PetsListNavigationProp =
   NativeStackNavigationProp<MainStackParamList, 'PetsList'>;
@@ -14,11 +15,16 @@ export const PetsListScreen = () => {
   const { pets } = useAppSelector(state => state.pets);
   const navigation = useNavigation<PetsListNavigationProp>();
   const dispatch = useAppDispatch();
+  const user = useAppSelector(state => state.auth.user);
+  const ownerId = user?.id;
 
-  useEffect(() => {
-    // si ya los tenés cargados, esto puede ser opcional
-    //dispatch(fetchBookings());
-  }, [dispatch]);
+  useFocusEffect(
+    useCallback(() => {
+      if (ownerId) {
+        dispatch(fetchPetsByOwner(ownerId));
+      }
+    }, [dispatch, ownerId])
+  );
 
   return (
     <View style={styles.container}>
