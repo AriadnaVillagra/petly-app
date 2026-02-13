@@ -3,11 +3,14 @@ import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../../app/store/hooks';
 import { login } from '../authSlice';
 
-
-export const LoginScreen = ({ onGoRegister, onGoConfirm }: {
+interface Props {
   onGoRegister?: () => void;
   onGoConfirm?: (email: string) => void;
-}) => {
+  onGoForgotPassword?: () => void;
+}
+
+
+export const LoginScreen = ({ onGoRegister, onGoConfirm, onGoForgotPassword }: Props) => {
   const dispatch = useAppDispatch();
   const { loading, error, requiresConfirmation, emailToConfirm } = useAppSelector(state => state.auth);
   const [email, setEmail] = useState('');
@@ -20,6 +23,8 @@ export const LoginScreen = ({ onGoRegister, onGoConfirm }: {
 
     dispatch(login({ email, password }));
   };
+
+
 
 
   return (
@@ -67,6 +72,15 @@ export const LoginScreen = ({ onGoRegister, onGoConfirm }: {
           ¿No tenés cuenta? Registrate
         </Text>
       </Pressable>
+
+      {!requiresConfirmation && (
+        <Pressable onPress={onGoForgotPassword}>
+          <Text style={styles.linkText}>
+            ¿Olvidaste tu contraseña?
+          </Text>
+        </Pressable>
+      )}
+      
     </View>
   );
 };
@@ -99,5 +113,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#1976D2',
     fontWeight: '500',
+  },
+  linkText: {
+    textAlign: 'center',
+    color: '#1976D2',
+    marginTop: 8,
   },
 });

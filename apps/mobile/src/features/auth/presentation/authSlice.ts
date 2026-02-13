@@ -89,6 +89,24 @@ export const bootstrapAuth = createAsyncThunk<
   }
 );
 
+export const forgotPassword = createAsyncThunk<
+  void,
+  { email: string }
+>('auth/forgotPassword', async ({ email }) => {
+  await authUseCases.forgotPassword(email);
+});
+
+export const confirmForgotPassword = createAsyncThunk<
+  void,
+  { email: string; code: string; newPassword: string }
+>('auth/confirmForgotPassword', async ({ email, code, newPassword }) => {
+  await authUseCases.confirmForgotPassword(
+    email,
+    code,
+    newPassword
+  );
+});
+
 /* =========================
    Slice
 ========================= */
@@ -96,11 +114,7 @@ export const bootstrapAuth = createAsyncThunk<
 const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {
-    logout(state) {
-      state.user = null;
-    },
-  },
+  reducers: {},
   extraReducers: builder => {
     builder
       // LOGIN
@@ -126,8 +140,10 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(register.fulfilled, (state, action: PayloadAction<UserDTO>) => {
+      .addCase(register.fulfilled, (state) => {
         state.loading = false;
+        //chequear esto, quizas no es necesario porque el backend no devuelve el usuario hasta que se confirma la cuenta
+        // state.requiresConfirmation = true;
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;

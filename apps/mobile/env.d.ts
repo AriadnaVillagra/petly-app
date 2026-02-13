@@ -6,4 +6,5 @@ declare module '@env' {
   export const DASHBOARD_PROVIDER: string;
   export const BOOKING_PROVIDER: string;
   export const PETS_PROVIDER: string;
+  export const API_BASE_URL: string;
 }

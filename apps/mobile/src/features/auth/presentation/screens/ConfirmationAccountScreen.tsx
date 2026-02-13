@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../app/store/hooks";
-import { confirmAccount, resendConfirmationCode } from "../authSlice";
+import { confirmAccount, confirmForgotPassword, login, resendConfirmationCode } from "../authSlice";
 import { ActivityIndicator, Button, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 interface Props {
@@ -27,15 +27,22 @@ export const ConfirmationAccountScreen = ({ email, onConfirmed, onGoLogin, onGoR
 
         try {
             await dispatch(
-                confirmAccount({ email: emailState, code })
+                confirmAccount({
+                    email: emailState,
+                    code,
+                })
             ).unwrap();
 
             setSuccess(true);
+
+            // opcional: login automático después de confirmar
             onConfirmed();
+
         } catch (err: any) {
             setLocalError(err?.message ?? 'Error al confirmar la cuenta');
         }
     };
+
 
     const handleResendCode = async () => {
         if (!emailState) {

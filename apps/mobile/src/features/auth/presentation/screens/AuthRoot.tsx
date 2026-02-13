@@ -3,9 +3,10 @@ import React, { useState } from 'react';
 import { LoginScreen } from './LoginScreen';
 import { RegisterScreen } from './RegisterScreen';
 import { ConfirmationAccountScreen } from './ConfirmationAccountScreen';
+import { ForgotPasswordScreen } from './ForgotPasswordScreen';
 
 
-type AuthScreen = 'login' | 'register' | 'confirm';
+type AuthScreen = 'login' | 'register' | 'confirm' | 'forgotPassword' | 'confirmForgotPassword';
 
 export const AuthRoot = () => {
     const [screen, setScreen] = useState<AuthScreen>('login');
@@ -36,7 +37,16 @@ export const AuthRoot = () => {
             />
         );
     }
-    
+
+    if (screen === 'forgotPassword') {
+        return (
+            <ForgotPasswordScreen
+                onGoLogin={() => setScreen('login')}
+            />
+        );
+    }
+
+
     return (
         <LoginScreen
             onGoRegister={() => setScreen('register')}
@@ -44,6 +54,8 @@ export const AuthRoot = () => {
                 setEmailToConfirm(email);
                 setScreen('confirm');
             }}
+            onGoForgotPassword={() => setScreen('forgotPassword')}
         />
     );
 };
+

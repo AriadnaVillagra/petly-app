@@ -1,3 +1,5 @@
+// src/features/booking/application/usecases/BookingUseCase.ts
+
 import { PetSize } from '../../../../shared/types/PetSizes';
 import { Booking } from '../../domain/entities/Booking';
 import { Service } from '../../domain/entities/Service';
@@ -27,6 +29,7 @@ export class CreateBooking {
       params.petSize,
       params.userId,
       params.service,
+      params.price,
       params.date,
       params.time,
       params.durationMinutes,

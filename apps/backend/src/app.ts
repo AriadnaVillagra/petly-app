@@ -1,6 +1,8 @@
 // src/app.ts
 // Main application setup file
-
+//dotenv is used to load environment variables from a .env file into process.env, allowing us to manage configuration settings securely and conveniently.
+import dotenv from 'dotenv';
+dotenv.config();
 import express from "express";
 import petRoutes from "./interfaces/routes/pet.routes";
 import bookingRoutes from "./interfaces/routes/booking.routes";

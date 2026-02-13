@@ -1,8 +1,7 @@
+// src/features/booking/domain/entities/Booking.ts
+
 import { BookingStatus } from '../../../../shared/types/BookingStatus';
 import { PetSize } from '../../../../shared/types/PetSizes';
-import { Service } from './Service';
-
-
 
 export class Booking {
   constructor(
@@ -11,16 +10,16 @@ export class Booking {
     public readonly petName: string,
     public readonly petSize: PetSize,
     public readonly userId: string,
-    public readonly service: Service,
+    public readonly service: {
+      id: string;
+      name: string;
+    },
+    public readonly price: number,
     public readonly date: string,
     public readonly time: string,
     public readonly durationMinutes: number,
     public readonly status: BookingStatus
-  ) {}
-
-  get price(): number {
-    return this.service.basePrice;
-  }
+  ) { }
 
   confirm(): Booking {
     if (this.status !== 'PENDING') return this;
@@ -31,6 +30,7 @@ export class Booking {
       this.petSize,
       this.userId,
       this.service,
+      this.price,
       this.date,
       this.time,
       this.durationMinutes,
@@ -47,6 +47,7 @@ export class Booking {
       this.petSize,
       this.userId,
       this.service,
+      this.price,
       this.date,
       this.time,
       this.durationMinutes,

@@ -1,12 +1,14 @@
 // src/app/di/booking.ts
 
-import { ENV } from '../config/env';
-import { BookingRepositoryMock } from '../../features/booking/data/repositories/BookingRepositoryMock';
 import { CancelBooking, ConfirmBooking, CreateBooking } from '../../features/booking/application/usecases/BookingUseCase';
-// futuro:
-// import { BookingRepositoryApi } from '../../features/booking/data/repositories/BookingRepositoryApi';
+import { BookingApiRepository } from '../../features/booking/data/repositories/BookingApiRepository';
+import { BookingRepositoryMock } from '../../features/booking/data/repositories/BookingRepositoryMock';
+import { ENV } from '../config/env';
 
-export const bookingRepository = new BookingRepositoryMock();
+export const bookingRepository =
+  ENV.BOOKING_PROVIDER === 'mock'
+    ? new BookingRepositoryMock()
+    : new BookingApiRepository();
 
 export const bookingUseCases = {
   createBooking: new CreateBooking(bookingRepository),

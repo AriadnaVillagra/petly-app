@@ -33,4 +33,12 @@ export class AuthUseCases {
   resendConfirmationCode(email: string): Promise<void> {
     return this.repository.resendConfirmationCode(email);
   }
+
+  forgotPassword(email: string): Promise<void> {
+    return this.repository.forgotPassword(email);
+  }
+
+  confirmForgotPassword(email: string, code: string, newPassword: string): Promise<void> {
+    return this.repository.confirmForgotPassword(email, code, newPassword);
+  }
 }

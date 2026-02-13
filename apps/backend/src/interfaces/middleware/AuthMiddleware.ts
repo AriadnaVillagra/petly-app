@@ -34,6 +34,7 @@ export function authMiddleware(
     { algorithms: ['RS256'] },
     (err, decoded: any) => {
       if (err) {
+        console.error("JWT VERIFY ERROR:", err);
         return res.status(401).json({ message: 'Invalid token' });
       }
 

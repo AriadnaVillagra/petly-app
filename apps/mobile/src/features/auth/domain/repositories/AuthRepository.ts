@@ -9,4 +9,6 @@ export interface AuthRepository {
     getCurrentUser(): Promise<User | null>;
     confirmAccount(email: string, code: string): Promise<void>;
     resendConfirmationCode(email: string): Promise<void>;
+    forgotPassword(email: string): Promise<void>;
+    confirmForgotPassword(email: string, code: string, newPassword: string): Promise<void>;
 }

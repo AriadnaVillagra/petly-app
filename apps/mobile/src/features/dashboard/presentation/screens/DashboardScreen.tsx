@@ -1,10 +1,10 @@
 // src/features/dashboard/presentation/screens/DashboardScreen.tsx
 
-import React, { useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Button } from 'react-native';
 import { fetchDashboard } from '../dashboardSlice';
 import { useAppDispatch, useAppSelector } from '../../../../app/store/hooks';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../../../../app/navigation/MainStackParamList';
 import { logout } from '../../../auth/presentation/authSlice';
@@ -19,9 +19,11 @@ export const DashboardScreen = () => {
     state => state.dashboard
   );
 
-  useEffect(() => {
+useFocusEffect(
+  useCallback(() => {
     dispatch(fetchDashboard());
-  }, [dispatch]);
+  }, [dispatch])
+);
 
   if (loading) {
     return (
@@ -42,7 +44,11 @@ export const DashboardScreen = () => {
   }
 
   if (!data) {
-    return null;
+    return (
+      <View style={styles.center}>
+        <Text>No hay datos disponibles</Text>
+      </View>
+    );
   }
 
   const nextBooking = data.nextBooking;
