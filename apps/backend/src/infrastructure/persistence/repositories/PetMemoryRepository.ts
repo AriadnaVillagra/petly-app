@@ -1,7 +1,8 @@
 // src/infrastructure/persistence/PetMemoryRepository.ts
 
-import { Pet } from "../../domain/entities/Pet";
-import { PetRepository } from "../../domain/repositories/PetRepository";
+import { Pet } from "../../../domain/entities/Pet";
+import { PetRepository } from "../../../domain/repositories/PetRepository";
+
 
 export class PetMemoryRepository implements PetRepository {
     private pets: Pet[] = [];

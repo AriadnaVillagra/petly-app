@@ -11,7 +11,8 @@ export class BookingMapper {
       petSize: booking.petSize,
       serviceId: booking.service.id,
       serviceName: booking.service.name,
-      price: booking.price,
+      serviceType: booking.service.type,
+      price: booking.service.basePrice,
       date: booking.date,
       time: booking.time,
       durationMinutes: booking.durationMinutes,
@@ -29,15 +30,15 @@ export class BookingMapper {
       dto.userId ?? '',
       {
         id: dto.service?.id ?? dto.serviceId,
-        name: dto.service?.name ?? dto.serviceName
+        name: dto.service?.name ?? dto.serviceName,
+        basePrice: dto.service?.basePrice ?? dto.price,
+        type: dto.service?.type ?? dto.serviceType,
       },
-      dto.service?.basePrice ?? dto.price,
       dto.date,
       dto.time,
       dto.durationMinutes,
       dto.status
     );
   }
-
 
 }

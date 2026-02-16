@@ -8,4 +8,5 @@ export interface BookingRepository {
   getById(id: string): Promise<Booking>;
   update(booking: Booking): Promise<Booking>;
   getAll(): Promise<Booking[]>;
+  findByUser(userId: string): Promise<Booking[]>;
 }

@@ -1,18 +1,20 @@
 // src/infrastructure/config/pet.composition.ts
 // Composition root for Pet module - wiring up use cases with repository and controller - dependency injection
 
+// src/infrastructure/config/compositions/pet.composition.ts
+
 import {
   CreatePetUseCase,
   GetPetsByOwnerUseCase,
   GetPetByIdUseCase,
   UpdatePetUseCase,
   DeletePetUseCase,
-} from "../../application/usecases/PetUsecases";
+} from "../../../application/usecases/PetUsecases";
 
-import { PetMemoryRepository } from "../persistence/PetMemoryRepository";
-import { PetController } from "../../interfaces/controller/PetController";
+import { PetController } from "../../../interfaces/controller/PetController";
+import { createPetRepository } from "../repositories/pet.repository.factory";
 
-const petRepository = new PetMemoryRepository();
+const petRepository = createPetRepository();
 
 const createPet = new CreatePetUseCase(petRepository);
 const getPetsByOwner = new GetPetsByOwnerUseCase(petRepository);
