@@ -1,24 +1,43 @@
-import React, { useEffect } from 'react';
+import React, { useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
   Text,
   StyleSheet,
   FlatList,
   ActivityIndicator,
+  Linking,
+  Button,
+  Alert,
 } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../../../../app/store/hooks';
 import { BookingDTO } from '../../application/dto/BookingDTO';
+import { createPreferenceThunk } from '../../../payment/presentation/paymentSlice';
+import { fetchBookingsByUser } from '../bookingSlice';
 
 export const BookingHistoryScreen = () => {
   const dispatch = useAppDispatch();
   const { bookings, loading } = useAppSelector(
     state => state.booking
   );
+  const user = useAppSelector(state => state.auth.user);
+  const handlePay = async (id: string) => {
+    try {
+      const result = await dispatch(createPreferenceThunk(id)).unwrap();
+      await Linking.openURL(result.initPoint);
+    } catch (error) {
+      console.error("Error creating payment preference:", error);
+      Alert.alert("Error", "No se pudo iniciar el pago. Intentá nuevamente.");
+    }
+  };
 
-  useEffect(() => {
-    // si ya los tenés cargados, esto puede ser opcional
-    //dispatch(fetchBookings());
-  }, [dispatch]);
+  useFocusEffect(
+    useCallback(() => {
+      if (user) {
+        dispatch(fetchBookingsByUser(user.id));
+      }
+    }, [dispatch, user])
+  );
 
   if (loading) {
     return (
@@ -48,6 +67,12 @@ export const BookingHistoryScreen = () => {
       <Text>Duración: {item.durationMinutes} min</Text>
       <Text>Precio: ${item.price}</Text>
       <Text style={styles.status}>Estado: {item.status}</Text>
+      {item.status === 'PENDING_PAYMENT' && (
+        <Button
+          title="💳 Pagar turno"
+          onPress={() => handlePay(item.id)}
+        />
+      )}
     </View>
   );
 

@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { appReducer } from './appSlices';
-import { bookingReducer } from '../../features/booking/presentation/bookingSlices';
+import { bookingReducer } from '../../features/booking/presentation/bookingSlice';
 import { authReducer } from '../../features/auth/presentation/authSlice';
 import { dashboardReducer } from '../../features/dashboard/presentation/dashboardSlice';
 import { petsReducer } from '../../features/pets/presentation/petSlices';
+import { paymentReducer } from '../../features/payment/presentation/paymentSlice';
+
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +14,8 @@ export const store = configureStore({
     auth: authReducer,
     dashboard: dashboardReducer,
     pets: petsReducer,
+    payment: paymentReducer,
+
   },
 });
 

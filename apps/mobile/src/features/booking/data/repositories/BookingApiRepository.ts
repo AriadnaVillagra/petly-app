@@ -42,4 +42,9 @@ export class BookingApiRepository implements BookingRepository {
     async delete(id: string): Promise<void> {
         await BookingApiClient.delete(`/bookings/${id}`);
     }
+
+    async findByUser(userId: string): Promise<Booking[]> {
+        const response = await BookingApiClient.get("/bookings");
+        return response.data.map(BookingMapper.toDomain);
+    }
 }

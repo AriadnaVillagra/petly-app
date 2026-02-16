@@ -17,6 +17,64 @@ export class Booking {
         public readonly durationMinutes: number,
         public readonly status: BookingStatus
     ) { }
+
+    markAsPaid(): Booking {
+        if (this.status !== "PENDING_PAYMENT") {
+            throw new Error("Only pending bookings can be marked as paid");
+        }
+
+        return new Booking(
+            this.id,
+            this.petId,
+            this.petName,
+            this.petSize,
+            this.userId,
+            this.service,
+            this.date,
+            this.time,
+            this.durationMinutes,
+            "PAID"
+        );
+    }
+
+    cancel(): Booking {
+        if (this.status === "PAID") {
+            throw new Error("Cannot cancel a paid booking");
+        }
+
+        return new Booking(
+            this.id,
+            this.petId,
+            this.petName,
+            this.petSize,
+            this.userId,
+            this.service,
+            this.date,
+            this.time,
+            this.durationMinutes,
+            "CANCELLED"
+        );
+    }
+
+    expire(): Booking {
+        if (this.status !== "PENDING_PAYMENT") {
+            throw new Error("Only pending bookings can expire");
+        }
+
+        return new Booking(
+            this.id,
+            this.petId,
+            this.petName,
+            this.petSize,
+            this.userId,
+            this.service,
+            this.date,
+            this.time,
+            this.durationMinutes,
+            "EXPIRED"
+        );
+    }
+
 }
 
 export type ServiceType =

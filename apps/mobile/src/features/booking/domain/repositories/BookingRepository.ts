@@ -8,4 +8,5 @@ export interface BookingRepository {
   update(booking: Booking): Promise<Booking>;
   getAll(): Promise<Booking[]>;
   delete(id: string): Promise<void>;
+  findByUser(userId: string): Promise<Booking[]>;
 }

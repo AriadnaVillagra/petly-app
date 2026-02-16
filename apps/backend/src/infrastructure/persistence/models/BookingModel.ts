@@ -52,7 +52,7 @@ const BookingSchema = new Schema(
     status: {
       type: String,
       required: true,
-      enum: ["PENDING", "CONFIRMED", "PAID", "CANCELLED"], // ajustalo a tu enum real
+      enum: ["PENDING_PAYMENT", "EXPIRED", "PAID", "CANCELLED"], // ajustalo a tu enum real
     },
   },
   {

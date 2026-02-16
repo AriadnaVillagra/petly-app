@@ -1,7 +1,7 @@
 // src/application/usecases/BookingUsecases.ts
 // Use case for creating a booking, implements the business logic for handling booking creation
 
-import { Booking, ServiceType } from "../../domain/entities/Booking";
+import { Booking } from "../../domain/entities/Booking";
 import { BookingRepository } from "../../domain/repositories/BookingRepository";
 import { BookingDTO, BookingStatus } from "../dtos/BookingDTO";
 import crypto from "crypto";

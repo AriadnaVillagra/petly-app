@@ -31,4 +31,8 @@ export class BookingRepositoryMock implements BookingRepository {
     );
     return updated;
   }
+
+  async findByUser(userId: string): Promise<Booking[]> {
+    return this.bookings.filter(b => b.userId === userId);
+  }
 }

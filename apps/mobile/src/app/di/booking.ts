@@ -1,6 +1,6 @@
 // src/app/di/booking.ts
 
-import { CancelBooking, ConfirmBooking, CreateBooking } from '../../features/booking/application/usecases/BookingUseCase';
+import { CancelBooking, ConfirmBooking, CreateBooking, GetBookingsByUser } from '../../features/booking/application/usecases/BookingUseCase';
 import { BookingApiRepository } from '../../features/booking/data/repositories/BookingApiRepository';
 import { BookingRepositoryMock } from '../../features/booking/data/repositories/BookingRepositoryMock';
 import { ENV } from '../config/env';
@@ -14,4 +14,6 @@ export const bookingUseCases = {
   createBooking: new CreateBooking(bookingRepository),
   confirmBooking: new ConfirmBooking(bookingRepository),
   cancelBooking: new CancelBooking(bookingRepository),
+  getBookingsByUser: new GetBookingsByUser(bookingRepository),
+
 };
