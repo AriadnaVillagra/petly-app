@@ -2,6 +2,7 @@
 
 import { BookingStatus } from '../../../../shared/types/BookingStatus';
 import { PetSize } from '../../../../shared/types/PetSizes';
+import { ServiceType } from './Service';
 
 export class Booking {
   constructor(
@@ -13,8 +14,9 @@ export class Booking {
     public readonly service: {
       id: string;
       name: string;
+      basePrice: number;
+      type: ServiceType;
     },
-    public readonly price: number,
     public readonly date: string,
     public readonly time: string,
     public readonly durationMinutes: number,
@@ -30,7 +32,6 @@ export class Booking {
       this.petSize,
       this.userId,
       this.service,
-      this.price,
       this.date,
       this.time,
       this.durationMinutes,
@@ -47,7 +48,6 @@ export class Booking {
       this.petSize,
       this.userId,
       this.service,
-      this.price,
       this.date,
       this.time,
       this.durationMinutes,

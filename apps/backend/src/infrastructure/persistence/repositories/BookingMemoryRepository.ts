@@ -1,10 +1,16 @@
 // src/infrastructure/persistence/BookingMemoryRepository.ts
 // In-memory implementation of BookingRepository for testing and development purposes, simulates database operations using an array
 
-import { Booking } from "../../domain/entities/Booking";
-import { BookingRepository } from "../../domain/repositories/BookingRepository";
+import { Booking } from "../../../domain/entities/Booking";
+import { BookingRepository } from "../../../domain/repositories/BookingRepository";
+
+
 
 export class BookingMemoryRepository implements BookingRepository {
+  async findByUser(userId: string): Promise<Booking[]> {
+    return this.bookings.filter(b => b.userId === userId);
+  }
+  
   private bookings: Booking[] = [];
 
   async create(booking: Booking): Promise<Booking> {

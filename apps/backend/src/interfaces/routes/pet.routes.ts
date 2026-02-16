@@ -1,7 +1,7 @@
 // src/interfaces/routes/pet.routes.ts
 
 import { Router } from "express";
-import { petController } from "../../infrastructure/config/pet.composition";
+import { petController } from "../../infrastructure/config/compositions/pet.composition";
 import { authMiddleware } from "../middleware/AuthMiddleware";
 
 const router = Router();

@@ -1,10 +1,18 @@
-// Composition root for Booking module
+// Composition root for Booking module, with factory integration
 // src/infrastructure/config/booking.composition.ts
 
+import { BookingController } from "../../../interfaces/controller/BookingController";
+import {
+  CreateBookingUseCase,
+  DeleteBookingUseCase,
+  GetBookingByIdUseCase,
+  ListBookingsUseCase,
+  UpdateBookingStatusUseCase
+} from "../../../application/usecases/BookingUsecases";
 
-import { BookingController } from "../../interfaces/controller/BookingController";
-import { CreateBookingUseCase, DeleteBookingUseCase, GetBookingByIdUseCase, ListBookingsUseCase, UpdateBookingStatusUseCase } from "../../application/usecases/BookingUsecases";
-import { bookingRepository } from "../persistence";
+import { createBookingRepository } from "../repositories/booking.repository.factory";
+
+const bookingRepository = createBookingRepository();
 
 const createBooking = new CreateBookingUseCase(bookingRepository);
 const getAllBookings = new ListBookingsUseCase(bookingRepository);

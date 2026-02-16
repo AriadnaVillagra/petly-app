@@ -15,7 +15,6 @@ export interface CreateBookingParams {
   date: string;
   time: string;
   durationMinutes: number;
-  price: number;
 }
 
 export class CreateBooking {
@@ -29,7 +28,6 @@ export class CreateBooking {
       params.petSize,
       params.userId,
       params.service,
-      params.price,
       params.date,
       params.time,
       params.durationMinutes,

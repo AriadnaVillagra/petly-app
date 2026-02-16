@@ -1,7 +1,7 @@
 // src/interfaces/routes/booking.routes.ts
 
 import { Router } from "express";
-import { bookingController } from "../../infrastructure/config/booking.composition";
+import { bookingController } from "../../infrastructure/config/compositions/booking.composition";
 import { authMiddleware } from "../middleware/AuthMiddleware";
 
 const router = Router();
