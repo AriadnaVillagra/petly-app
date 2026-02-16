@@ -7,37 +7,45 @@ import { BookingRepository } from "../../domain/repositories/BookingRepository";
 export class GetDashboardUseCase {
   constructor(
     private bookingRepo: BookingRepository
-  ) {}
+  ) { }
 
   async execute(userId: string): Promise<Dashboard> {
+    const now = new Date();
+    const bookings = await this.bookingRepo.findByUser(userId);
 
-    const bookings = await this.bookingRepo.findByUser(userId)
-
-    const nextBooking = bookings
-      .filter(b => b.status === "PENDING" || b.status === "CONFIRMED")
+    const upcomingBookings = bookings
+      .map(b => ({
+        ...b,
+        dateTime: new Date(`${b.date}T${b.time}`)
+      }))
+      .filter(b =>
+        (b.status === "PENDING_PAYMENT" || b.status === "PAID") &&
+        b.dateTime >= now
+      )
       .sort((a, b) =>
-        new Date(`${a.date} ${a.time}`).getTime() -
-        new Date(`${b.date} ${b.time}`).getTime()
-      )[0] ?? null;
+        a.dateTime.getTime() - b.dateTime.getTime()
+      );
+
+    const nextBooking = upcomingBookings[0] ?? null;
 
     return new Dashboard({
       nextBooking: nextBooking
         ? new DashboardNextBooking(
-            nextBooking.id,
-            nextBooking.service.name,
-            nextBooking.petName,
-            nextBooking.petSize,
-            nextBooking.date,
-            nextBooking.time,
-            nextBooking.service.basePrice,
-            nextBooking.status
-          )
+          nextBooking.id,
+          nextBooking.service.name,
+          nextBooking.petName,
+          nextBooking.petSize,
+          nextBooking.date,
+          nextBooking.time,
+          nextBooking.service.basePrice,
+          nextBooking.status
+        )
         : null,
 
       stats: new DashboardStats(
         bookings.length,
-        bookings.filter(b => b.status === "PENDING").length,
-        bookings.filter(b => b.status === "CONFIRMED").length,
+        bookings.filter(b => b.status === "PENDING_PAYMENT").length,
+        bookings.filter(b => b.status === "EXPIRED").length,
         bookings.filter(b => b.status === "PAID").length
       )
     });

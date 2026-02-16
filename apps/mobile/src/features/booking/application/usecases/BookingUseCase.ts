@@ -18,7 +18,7 @@ export interface CreateBookingParams {
 }
 
 export class CreateBooking {
-  constructor(private readonly repository: BookingRepository) {}
+  constructor(private readonly repository: BookingRepository) { }
 
   async execute(params: CreateBookingParams): Promise<Booking> {
     const booking = new Booking(
@@ -31,7 +31,7 @@ export class CreateBooking {
       params.date,
       params.time,
       params.durationMinutes,
-      'PENDING'
+      'PENDING_PAYMENT'
     );
 
     return this.repository.create(booking);
@@ -39,7 +39,7 @@ export class CreateBooking {
 }
 
 export class ConfirmBooking {
-  constructor(private readonly repository: BookingRepository) {}
+  constructor(private readonly repository: BookingRepository) { }
 
   async execute(id: string): Promise<Booking> {
     const booking = await this.repository.getById(id);
@@ -49,11 +49,19 @@ export class ConfirmBooking {
 }
 
 export class CancelBooking {
-  constructor(private readonly repository: BookingRepository) {}
+  constructor(private readonly repository: BookingRepository) { }
 
   async execute(id: string): Promise<Booking> {
     const booking = await this.repository.getById(id);
     const cancelled = booking.cancel();
     return this.repository.update(cancelled);
+  }
+}
+
+export class GetBookingsByUser {
+  constructor(private readonly repository: BookingRepository) { }
+
+  async execute(userId: string): Promise<Booking[]> {
+    return this.repository.findByUser(userId);
   }
 }

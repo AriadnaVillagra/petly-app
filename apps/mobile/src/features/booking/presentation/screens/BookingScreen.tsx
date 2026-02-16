@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, Modal, Pressable } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../../../../app/store/hooks';
-import { cancelBooking, confirmBooking, createBooking } from '../bookingSlices';
+import { cancelBooking, confirmBooking, createBooking } from '../bookingSlice';
 import { ServiceSelector } from '../components/ServiceSelector';
 import { SERVICES } from '../constants/services';
 import { Service } from '../../domain/entities/Service';
@@ -81,7 +81,6 @@ export const CreateBookingScreen = () => {
         date: selectedDate,
         time: selectedTime,
         durationMinutes: getServiceDurationMinutes(selectedService.type, petSize),
-        price: selectedService.basePrice,
       })
     );
     setSelectedDate('');

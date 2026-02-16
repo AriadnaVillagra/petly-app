@@ -1,3 +1,5 @@
+
+
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { BookingDTO } from '../application/dto/BookingDTO';
 import { BookingMapper } from '../application/mapper/BookingMapper';
@@ -39,6 +41,14 @@ export const cancelBooking = createAsyncThunk<
   return BookingMapper.toDTO(booking);
 });
 
+export const fetchBookingsByUser = createAsyncThunk<
+  BookingDTO[],
+  string
+>('booking/fetchByUser', async userId => {
+  const bookings = await bookingUseCases.getBookingsByUser.execute(userId);
+  return bookings.map(BookingMapper.toDTO);
+});
+
 const bookingSlice = createSlice({
   name: 'booking',
   initialState,
@@ -69,6 +79,16 @@ const bookingSlice = createSlice({
         if (index !== -1) {
           state.bookings[index] = action.payload;
         }
+      })
+      .addCase(fetchBookingsByUser.pending, state => {
+        state.loading = true;
+      })
+      .addCase(fetchBookingsByUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.bookings = action.payload;
+      })
+      .addCase(fetchBookingsByUser.rejected, state => {
+        state.loading = false;
       });
   },
 });

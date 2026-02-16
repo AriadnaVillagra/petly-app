@@ -5,10 +5,10 @@ import { ServiceType } from "../../domain/entities/Booking";
 import { PetSize } from "../../domain/entities/Pet";
 
 export type BookingStatus =
-    | 'PENDING'
-    | 'CONFIRMED'
+    | 'PENDING_PAYMENT'
     | 'PAID'
-    | 'CANCELLED';
+    | 'CANCELLED'
+    | 'EXPIRED'
 
 export interface BookingDTO {
     petId: string;
