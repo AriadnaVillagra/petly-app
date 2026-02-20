@@ -4,7 +4,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { petsUseCse } from '../../../app/di/pets';
 import { PetDTO } from '../application/dto/PetDto';
 import { PetMapper } from '../application/mapper/petMapper';
-import { CreatePetParams } from '../application/usecases/petUsecases';
+import { CreatePetParams } from '../application/usecases/PetUsecases';
 import { Pet } from '../domain/entities/Pet';
 
 

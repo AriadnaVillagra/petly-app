@@ -1,8 +1,8 @@
-import { ActivityIndicator, Button, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../../app/store/hooks';
 import { login } from '../authSlice';
-
+import { ScreenContainer, Stack, useTheme, Typography, Input, LinkText, Button } from '@petly/design-system';
 interface Props {
   onGoRegister?: () => void;
   onGoConfirm?: (email: string) => void;
@@ -12,6 +12,7 @@ interface Props {
 
 export const LoginScreen = ({ onGoRegister, onGoConfirm, onGoForgotPassword }: Props) => {
   const dispatch = useAppDispatch();
+  const theme = useTheme();
   const { loading, error, requiresConfirmation, emailToConfirm } = useAppSelector(state => state.auth);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,99 +25,82 @@ export const LoginScreen = ({ onGoRegister, onGoConfirm, onGoForgotPassword }: P
     dispatch(login({ email, password }));
   };
 
-
-
-
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Iniciar sesión</Text>
+    <ScreenContainer
+      style={{
+        padding: theme.spacing.lg,
+        justifyContent: 'center',
+      }}
+    >
+      <Stack spacing="lg">
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        autoCapitalize="none"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
+        <Typography
+          variant="title"
+          style={{ textAlign: 'center' }}
+        >
+          Iniciar sesión
+        </Typography>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
+        <Stack spacing="sm">
+          <Input
+            placeholder="Email"
+            autoCapitalize="none"
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+          />
 
-      {error && (
-        <Text style={styles.error}>{error}</Text>
-      )}
+          <Input
+            placeholder="Contraseña"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+        </Stack>
 
-      {requiresConfirmation && emailToConfirm && (
-        <View style={{ marginBottom: 12 }}>
+        {error && (
+          <Typography
+            style={{
+              color: theme.colors.error,
+              textAlign: 'center',
+            }}
+          >
+            {error}
+          </Typography>
+        )}
+
+        {requiresConfirmation && emailToConfirm && (
           <Button
             title="Confirmar cuenta"
+            variant="secondary"
             onPress={() => onGoConfirm?.(emailToConfirm)}
           />
-        </View>
-      )}
+        )}
 
-      {loading ? (
-        <ActivityIndicator size="large" />
-      ) : (
-        <Button title="Ingresar" onPress={handleLogin} />
-      )}
+        {loading ? (
+          <ActivityIndicator />
+        ) : (
+          <Button
+            title="Ingresar"
+            variant="primary"
+            onPress={handleLogin}
+          />
+        )}
 
-      <Pressable onPress={onGoRegister} style={{ marginTop: 16 }}>
-        <Text style={styles.switchText}>
-          ¿No tenés cuenta? Registrate
-        </Text>
-      </Pressable>
+        <Stack spacing="sm">
+          <LinkText onPress={onGoRegister}>
+            ¿No tenés cuenta? Registrate
+          </LinkText>
 
-      {!requiresConfirmation && (
-        <Pressable onPress={onGoForgotPassword}>
-          <Text style={styles.linkText}>
-            ¿Olvidaste tu contraseña?
-          </Text>
-        </Pressable>
-      )}
-      
-    </View>
+          {!requiresConfirmation && (
+            <LinkText onPress={onGoForgotPassword}>
+              ¿Olvidaste tu contraseña?
+            </LinkText>
+          )}
+        </Stack>
+
+      </Stack>
+    </ScreenContainer>
   );
-};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 22,
-    marginBottom: 24,
-    textAlign: 'center',
-    fontWeight: '600',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 12,
-  },
-  error: {
-    color: 'red',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  switchText: {
-    textAlign: 'center',
-    color: '#1976D2',
-    fontWeight: '500',
-  },
-  linkText: {
-    textAlign: 'center',
-    color: '#1976D2',
-    marginTop: 8,
-  },
-});
+};

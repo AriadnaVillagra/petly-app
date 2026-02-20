@@ -1,28 +1,21 @@
 // src/features/auth/presentation/screens/ForgotPasswordScreen.tsx
 
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  StyleSheet,
-  ActivityIndicator,
-  Pressable,
-} from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../../../../app/store/hooks';
 import {
   forgotPassword,
   confirmForgotPassword,
   login,
 } from '../authSlice';
-
+import { useTheme, ScreenContainer, Stack, Typography, Input, Button, LinkText } from '@petly/design-system';
 interface Props {
   onGoLogin: () => void;
 }
 
 export const ForgotPasswordScreen = ({ onGoLogin }: Props) => {
   const dispatch = useAppDispatch();
+  const theme = useTheme();
   const { loading, error } = useAppSelector(state => state.auth);
 
   const [email, setEmail] = useState('');
@@ -77,101 +70,102 @@ export const ForgotPasswordScreen = ({ onGoLogin }: Props) => {
 
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Recuperar contraseña</Text>
+    <ScreenContainer
+      style={{
+        padding: theme.spacing.lg,
+        justifyContent: 'center',
+      }}
+    >
+      <Stack spacing="lg">
 
-      {step === 'request' && (
-        <>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            autoCapitalize="none"
-            keyboardType="email-address"
-            value={email}
-            onChangeText={setEmail}
-          />
+        <Typography
+          variant="title"
+          style={{ textAlign: 'center' }}
+        >
+          Recuperar contraseña
+        </Typography>
 
-          {localError && (
-            <Text style={styles.error}>{localError}</Text>
-          )}
+        {step === 'request' && (
+          <Stack spacing="sm">
 
-          {loading ? (
-            <ActivityIndicator size="large" />
-          ) : (
-            <Button title="Enviar código" onPress={handleRequestCode} />
-          )}
-        </>
-      )}
-
-      {step === 'confirm' && (
-        <>
-          <TextInput
-            style={styles.input}
-            placeholder="Código de verificación"
-            keyboardType="number-pad"
-            value={code}
-            onChangeText={setCode}
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Nueva contraseña"
-            secureTextEntry
-            value={newPassword}
-            onChangeText={setNewPassword}
-          />
-
-          {localError && (
-            <Text style={styles.error}>{localError}</Text>
-          )}
-
-          {loading ? (
-            <ActivityIndicator size="large" />
-          ) : (
-            <Button
-              title="Confirmar nueva contraseña"
-              onPress={handleConfirmPassword}
+            <Input
+              placeholder="Email"
+              autoCapitalize="none"
+              keyboardType="email-address"
+              value={email}
+              onChangeText={setEmail}
             />
-          )}
-        </>
-      )}
 
-      <Pressable onPress={onGoLogin} style={{ marginTop: 24 }}>
-        <Text style={styles.linkText}>
+            {localError && (
+              <Typography
+                style={{
+                  color: theme.colors.error,
+                  textAlign: 'center',
+                }}
+              >
+                {localError}
+              </Typography>
+            )}
+
+            {loading ? (
+              <ActivityIndicator />
+            ) : (
+              <Button
+                title="Enviar código"
+                variant="primary"
+                onPress={handleRequestCode}
+              />
+            )}
+
+          </Stack>
+        )}
+
+        {step === 'confirm' && (
+          <Stack spacing="sm">
+
+            <Input
+              placeholder="Código de verificación"
+              keyboardType="number-pad"
+              value={code}
+              onChangeText={setCode}
+            />
+
+            <Input
+              placeholder="Nueva contraseña"
+              secureTextEntry
+              value={newPassword}
+              onChangeText={setNewPassword}
+            />
+
+            {localError && (
+              <Typography
+                style={{
+                  color: theme.colors.error,
+                  textAlign: 'center',
+                }}
+              >
+                {localError}
+              </Typography>
+            )}
+
+            {loading ? (
+              <ActivityIndicator />
+            ) : (
+              <Button
+                title="Confirmar nueva contraseña"
+                variant="primary"
+                onPress={handleConfirmPassword}
+              />
+            )}
+
+          </Stack>
+        )}
+
+        <LinkText onPress={onGoLogin}>
           ← Volver a iniciar sesión
-        </Text>
-      </Pressable>
-    </View>
+        </LinkText>
+
+      </Stack>
+    </ScreenContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 22,
-    marginBottom: 24,
-    textAlign: 'center',
-    fontWeight: '600',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 12,
-  },
-  error: {
-    color: 'red',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  linkText: {
-    textAlign: 'center',
-    color: '#1976D2',
-    fontWeight: '500',
-  },
-});

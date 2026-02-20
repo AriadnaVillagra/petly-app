@@ -1,161 +1,184 @@
 // src/features/dashboard/presentation/screens/DashboardScreen.tsx
 
-import React, { useCallback } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Button } from 'react-native';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { ActivityIndicator, Animated } from 'react-native';
 import { fetchDashboard } from '../dashboardSlice';
 import { useAppDispatch, useAppSelector } from '../../../../app/store/hooks';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../../../../app/navigation/MainStackParamList';
 import { logout } from '../../../auth/presentation/authSlice';
+import { ScreenContainer, Typography, Stack, Card, Button, useTheme } from '@petly/design-system';
+
 
 type DashboardNavigationProp =
   NativeStackNavigationProp<MainStackParamList, 'Dashboard'>;
 
 export const DashboardScreen = () => {
+  const theme = useTheme();
   const dispatch = useAppDispatch();
   const navigation = useNavigation<DashboardNavigationProp>();
-  const { data, loading, error } = useAppSelector(
-    state => state.dashboard
-  );
+  const { data, loading, error } = useAppSelector(state => state.dashboard);
+  const fade = useRef(new Animated.Value(0)).current
 
-useFocusEffect(
-  useCallback(() => {
-    dispatch(fetchDashboard());
-  }, [dispatch])
-);
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(fetchDashboard())
+    }, [dispatch])
+  )
+
+  useEffect(() => {
+    if (data) {
+      fade.setValue(0)
+
+      Animated.timing(fade, {
+        toValue: 1,
+        duration: 220,
+        useNativeDriver: true,
+      }).start()
+    }
+  }, [data])
 
   if (loading) {
     return (
-      <View style={styles.center}>
+      <ScreenContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" />
-        <Text>Cargando dashboard...</Text>
-      </View>
+        <Typography>Cargando dashboard...</Typography>
+      </ScreenContainer>
     );
   }
 
   if (error) {
     return (
-      <View style={styles.center}>
-        <Text style={styles.errorText}>{error}</Text>
-        <Button title="Reintentar" onPress={() => dispatch(fetchDashboard())} />
-      </View>
-    );
+      <ScreenContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <Stack spacing="md">
+          <Typography style={{ color: theme.colors.error }}>
+            {error}
+          </Typography>
+          <Button
+            title="Reintentar"
+            onPress={() => dispatch(fetchDashboard())}
+          />
+        </Stack>
+      </ScreenContainer>
+    )
   }
 
   if (!data) {
     return (
-      <View style={styles.center}>
-        <Text>No hay datos disponibles</Text>
-      </View>
-    );
+      <ScreenContainer style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <Typography>No hay datos disponibles</Typography>
+      </ScreenContainer>
+    )
   }
-
   const nextBooking = data.nextBooking;
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>👋 Hola!</Text>
+    <ScreenContainer style={{ padding: theme.spacing.lg }}>
+      <Animated.View
+        style={{
+          opacity: fade,
+          transform: [
+            {
+              translateY: fade.interpolate({
+                inputRange: [0, 1],
+                outputRange: [30, 0],
+              }),
+            },
+          ],
+        }}
+      >
 
-      {/* Próximo booking */}
-      {nextBooking ? (
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Próximo turno</Text>
+        <Stack spacing="lg">
 
-          <Text>
-            🐶 Mascota: {nextBooking.petName} ({nextBooking.petSize})
-          </Text>
+          <Typography variant="title">
+            👋 Hola!
+          </Typography>
 
-          <Text>
-            ✂️ Servicio: {nextBooking.serviceName}
-          </Text>
+          {/* Próximo booking */}
+          <Card>
+            {nextBooking ? (
+              <Stack spacing="sm">
+                <Typography variant="title">
+                  Próximo turno
+                </Typography>
 
-          <Text>
-            📅 {nextBooking.date} a las {nextBooking.time}
-          </Text>
+                <Typography>
+                  🐶 {nextBooking.petName} ({nextBooking.petSize})
+                </Typography>
 
-          <Text>
-            💰 Precio: ${nextBooking.price}
-          </Text>
+                <Typography>
+                  ✂️ {nextBooking.serviceName}
+                </Typography>
 
-          <Text>
-            📌 Estado: {nextBooking.status}
-          </Text>
-        </View>
-      ) : (
-        <View style={styles.card}>
-          <Text>No tenés turnos agendados todavía 🐾</Text>
-        </View>
-      )}
+                <Typography>
+                  📅 {nextBooking.date} a las {nextBooking.time}
+                </Typography>
+
+                <Typography>
+                  💰 ${nextBooking.price}
+                </Typography>
+
+                <Typography>
+                  📌 {nextBooking.status}
+                </Typography>
+              </Stack>
+            ) : (
+              <Typography>
+                No tenés turnos agendados todavía 🐾
+              </Typography>
+            )}
+          </Card>
 
 
-      {/* Acciones */}
-      <View style={styles.actions}>
-        <Button
-          title="Mis mascotas"
-          onPress={() => navigation.navigate('PetsList')}
-        />
-        <Button
-          title="Crear booking"
-          onPress={() => navigation.navigate('CreateBooking')}
-        />
-        <Button
-          title="Ver historial"
-          onPress={() => navigation.navigate('BookingHistory')}
-        />
-      </View>
+          {/* Acciones */}
+          <Stack spacing="sm">
+            <Button
+              title="Mis mascotas"
+              variant="secondary"
+              onPress={() => navigation.navigate('PetsList')}
+            />
 
-      {/* Resumen */}
-      <View style={styles.card}>
-        <Text>Total de bookings: {data.stats.total}</Text>
-        <Text>Pendientes: {data.stats.pending}</Text>
-        <Text>Confirmados: {data.stats.confirmed}</Text>
-        <Text>Pagados: {data.stats.paid}</Text>
-      </View>
+            <Button
+              title="Crear booking"
+              variant="primary"
+              onPress={() => navigation.navigate('CreateBooking')}
+            />
 
-      <Button
-        title="Cerrar sesión"
-        onPress={() => dispatch(logout())}
-      />
-    </View>
+            <Button
+              title="Ver historial"
+              variant="secondary"
+              onPress={() => navigation.navigate('BookingHistory')}
+            />
+          </Stack>
 
+          {/* Resumen */}
+          <Card>
+            <Stack spacing="xs">
+              <Typography>
+                Total: {data.stats.total}
+              </Typography>
+              <Typography>
+                Pendientes: {data.stats.pending}
+              </Typography>
+              <Typography>
+                Confirmados: {data.stats.confirmed}
+              </Typography>
+              <Typography>
+                Pagados: {data.stats.paid}
+              </Typography>
+            </Stack>
+          </Card>
+
+          <Button
+            title="Cerrar sesión"
+            variant="secondary"
+            onPress={() => dispatch(logout())}
+          />
+
+        </Stack>
+      </Animated.View>
+    </ScreenContainer >
 
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    justifyContent: 'space-between',
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '600',
-    marginBottom: 16,
-  },
-  card: {
-    padding: 16,
-    borderRadius: 8,
-    backgroundColor: '#f2f2f2',
-    marginBottom: 16,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: '500',
-    marginBottom: 8,
-  },
-  actions: {
-    gap: 12,
-    marginBottom: 16,
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 12,
-  },
-});
