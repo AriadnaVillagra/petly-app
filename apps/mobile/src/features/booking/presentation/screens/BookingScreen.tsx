@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, Modal, Pressable } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../../../../app/store/hooks';
-import { cancelBooking, confirmBooking, createBooking } from '../bookingSlice';
+import { createBooking } from '../bookingSlice';
 import { ServiceSelector } from '../components/ServiceSelector';
 import { SERVICES } from '../constants/services';
 import { Service } from '../../domain/entities/Service';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { getServiceDurationMinutes } from '../../domain/utils/serviceDuration';
 import { getAvailableStartTimesWithBookings } from '../../domain/utils/scheduling';
-import { fetchDashboard } from '../../../dashboard/presentation/dashboardSlice';
 import { PetSize } from '../../../../shared/types/PetSizes';
 import { fetchPetsByOwner } from '../../../pets/presentation/petSlices';
 import { PetDTO } from '../../../pets/application/dto/PetDto';
-
-
+import { ScreenContainer, Typography, useTheme, Section, SelectableChip, Stack, ModalCard, Button } from '@petly/design-system';
 
 export const CreateBookingScreen = () => {
   const dispatch = useAppDispatch();
@@ -21,6 +18,7 @@ export const CreateBookingScreen = () => {
   const bookings = useAppSelector(state => state.booking.bookings);
   const pets = useAppSelector(state => state.pets.pets);
   const user = useAppSelector(state => state.auth.user);
+  const theme = useTheme()
 
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedTime, setSelectedTime] = useState<string>('');
@@ -39,16 +37,6 @@ export const CreateBookingScreen = () => {
     }
   }, [selectedService]);
 
-
-  const handleConfirm = async (id: string) => {
-    await dispatch(confirmBooking(id)).unwrap();
-    dispatch(fetchDashboard());
-  };
-
-  const handleCancel = async (id: string) => {
-    await dispatch(cancelBooking(id)).unwrap();
-    dispatch(fetchDashboard());
-  };
   const activeBookings = bookings.filter(
     b => b.status !== 'CANCELLED'
   );
@@ -94,6 +82,13 @@ export const CreateBookingScreen = () => {
     !!selectedDate &&
     availableTimes.length > 0;
 
+  const isCreateDisabled =
+    !selectedService ||
+    !selectedPet ||
+    !selectedDate ||
+    !selectedTime ||
+    loading
+
   const timeButtonTitle = selectedTime
     ? `⏰ Hora: ${selectedTime}`
     : !selectedService
@@ -107,42 +102,25 @@ export const CreateBookingScreen = () => {
 
 
   return (
-    <View style={{ flex: 1, padding: 24 }}>
-      <Text style={{ fontSize: 22, marginBottom: 16 }}>
+    <ScreenContainer style={{ padding: theme.spacing.lg }}>
+
+      <Typography variant="title">
         🐾 Crear Booking
-      </Text>
+      </Typography>
 
-      <Text style={{ marginTop: 16, fontWeight: '600' }}>
-        🐶 Seleccioná una mascota
-      </Text>
-
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-        {pets.map(pet => (
-          <Pressable
-            key={pet.id}
-            onPress={() => setSelectedPet(pet)}
-            style={{
-              padding: 10,
-              margin: 6,
-              borderRadius: 8,
-              backgroundColor:
-                selectedPet?.id === pet.id ? '#4CAF50' : '#E0E0E0',
-            }}
-          >
-            <Text
-              style={{
-                color: selectedPet?.id === pet.id ? 'white' : 'black',
-                fontWeight: '600',
-              }}
-            >
-              {pet.name}
-            </Text>
-            <Text style={{ fontSize: 12 }}>
-              {pet.breed} · {pet.size}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
+      <Section title="🐶 Seleccioná una mascota">
+        <Stack direction="row" wrap spacing="sm">
+          {pets.map(pet => (
+            <SelectableChip
+              key={pet.id}
+              label={pet.name}
+              subLabel={`${pet.breed} · ${pet.size}`}
+              selected={selectedPet?.id === pet.id}
+              onPress={() => setSelectedPet(pet)}
+            />
+          ))}
+        </Stack>
+      </Section>
 
       {/* Selector de servicio */}
       <ServiceSelector
@@ -152,84 +130,55 @@ export const CreateBookingScreen = () => {
       />
 
       {/* Selector de fecha */}
-      <Button
-        title={
-          selectedDate
-            ? `📅 Fecha: ${selectedDate}`
-            : 'Seleccionar fecha'
-        }
-        onPress={() => setShowDatePicker(true)}
-      />
+      <Section title="📅 Fecha">
+        <Button
+          title={
+            selectedDate
+              ? `Fecha: ${selectedDate}`
+              : 'Seleccionar fecha'
+          }
+          onPress={() => setShowDatePicker(true)}
+        />
+      </Section>
 
       {/* Selector de hora */}
-      <Button
-        title={timeButtonTitle}
-        disabled={!canOpenTimeModal}
-        onPress={() => setShowTimeModal(true)}
-      />
+      <Section title="⏰ Horario">
+        <Button
+          title={timeButtonTitle}
+          disabled={!canOpenTimeModal}
+          onPress={() => setShowTimeModal(true)}
+        />
+      </Section>
 
-      <Modal
+      {/* Modal de horarios */}
+      <ModalCard
         visible={showTimeModal}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setShowTimeModal(false)}
+        onClose={() => setShowTimeModal(false)}
       >
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: 'rgba(0,0,0,0.4)',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <View
-            style={{
-              backgroundColor: 'white',
-              padding: 20,
-              borderRadius: 12,
-              width: '80%',
-              maxHeight: '70%',
-            }}
-          >
-            <Text style={{ fontSize: 18, marginBottom: 12 }}>
-              ⏰ Elegí un horario
-            </Text>
+        <Typography variant="title">
+          ⏰ Elegí un horario
+        </Typography>
 
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-              {availableTimes.map(time => (
-                <Pressable
-                  key={time}
-                  onPress={() => {
-                    setSelectedTime(time);
-                    setShowTimeModal(false);
-                  }}
-                  style={{
-                    paddingVertical: 8,
-                    paddingHorizontal: 12,
-                    margin: 6,
-                    borderRadius: 8,
-                    backgroundColor:
-                      selectedTime === time ? '#4CAF50' : '#E0E0E0',
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: selectedTime === time ? 'white' : 'black',
-                      fontWeight: '600',
-                    }}
-                  >
-                    {time}
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
-            <Button
-              title="Cancelar"
-              onPress={() => setShowTimeModal(false)}
+        <Stack direction="row" wrap spacing="sm">
+          {availableTimes.map(time => (
+            <SelectableChip
+              key={time}
+              label={time}
+              selected={selectedTime === time}
+              onPress={() => {
+                setSelectedTime(time)
+                setShowTimeModal(false)
+              }}
             />
-          </View>
-        </View>
-      </Modal>
+          ))}
+        </Stack>
+
+        <Button
+          title="Cancelar"
+          variant="secondary"
+          onPress={() => setShowTimeModal(false)}
+        />
+      </ModalCard>
 
 
       {/* Date Picker */}
@@ -263,17 +212,14 @@ export const CreateBookingScreen = () => {
       )}
 
       {/* Crear booking */}
-      <Button
-        title="Crear turno"
-        onPress={handleCreateBooking}
-        disabled={
-          !selectedService ||
-          !selectedPet ||
-          !selectedDate ||
-          !selectedTime ||
-          loading
-        }
-      />
-    </View>
+      <Stack spacing="lg">
+        <Button
+          title="Crear turno"
+          variant="primary"
+          onPress={handleCreateBooking}
+          disabled={isCreateDisabled}
+        />
+      </Stack>
+    </ScreenContainer>
   );
 };

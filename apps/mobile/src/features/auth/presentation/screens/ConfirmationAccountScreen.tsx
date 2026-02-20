@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../app/store/hooks";
-import { confirmAccount, confirmForgotPassword, login, resendConfirmationCode } from "../authSlice";
-import { ActivityIndicator, Button, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-
+import { confirmAccount, resendConfirmationCode } from "../authSlice";
+import { ActivityIndicator } from "react-native";
+import { ScreenContainer, useTheme, Stack, Typography, Input, Button, LinkText } from '@petly/design-system';
 interface Props {
     email?: string;
     onConfirmed: () => void;
@@ -12,6 +12,7 @@ interface Props {
 
 export const ConfirmationAccountScreen = ({ email, onConfirmed, onGoLogin, onGoRegister }: Props) => {
     const dispatch = useAppDispatch();
+    const theme = useTheme();
     const { loading } = useAppSelector(state => state.auth);
     const [code, setCode] = useState('');
     const [emailState, setEmail] = useState(email ?? '');
@@ -64,118 +65,96 @@ export const ConfirmationAccountScreen = ({ email, onConfirmed, onGoLogin, onGoR
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Confirmar cuenta</Text>
+        <ScreenContainer
+            style={{
+                padding: theme.spacing.lg,
+                justifyContent: 'center',
+            }}
+        >
+            <Stack spacing="lg">
 
-            <Text style={styles.subtitle}>
-                Ingresá el código que te enviamos por email
-            </Text>
+                <Typography
+                    variant="title"
+                    style={{ textAlign: 'center' }}
+                >
+                    Confirmar cuenta
+                </Typography>
 
-            <TextInput
-                style={styles.input}
-                placeholder="Email"
-                autoCapitalize="none"
-                keyboardType="email-address"
-                value={emailState}
-                onChangeText={setEmail}
-            />
+                <Typography
+                    style={{
+                        textAlign: 'center',
+                        color: theme.colors.mutedText,
+                    }}
+                >
+                    Ingresá el código que te enviamos por email
+                </Typography>
 
-            <TextInput
-                style={styles.input}
-                placeholder="Código de verificación"
-                keyboardType="number-pad"
-                value={code}
-                onChangeText={setCode}
-            />
+                <Stack spacing="sm">
+                    <Input
+                        placeholder="Email"
+                        autoCapitalize="none"
+                        keyboardType="email-address"
+                        value={emailState}
+                        onChangeText={setEmail}
+                    />
 
-            {localError && (
-                <Text style={styles.errorText}>
-                    {localError}
-                </Text>
-            )}
+                    <Input
+                        placeholder="Código de verificación"
+                        keyboardType="number-pad"
+                        value={code}
+                        onChangeText={setCode}
+                    />
+                </Stack>
 
-            {success && (
-                <Text style={styles.successText}>
-                    ✅ Cuenta confirmada correctamente
-                </Text>
-            )}
+                {localError && (
+                    <Typography
+                        style={{
+                            color: theme.colors.error,
+                            textAlign: 'center',
+                        }}
+                    >
+                        {localError}
+                    </Typography>
+                )}
 
-            {loading ? (
-                <ActivityIndicator size="large" />
-            ) : (
-                <Button title="Confirmar cuenta" onPress={handleConfirm} />
-            )}
+                {success && (
+                    <Typography
+                        style={{
+                            color: theme.colors.success,
+                            textAlign: 'center',
+                        }}
+                    >
+                        ✅ Cuenta confirmada correctamente
+                    </Typography>
+                )}
 
-            <Pressable
-                onPress={handleResendCode}
-                style={{ marginTop: 16 }}
-            >
-                <Text style={styles.linkText}>
-                    Reenviar código
-                </Text>
-            </Pressable>
+                {loading ? (
+                    <ActivityIndicator />
+                ) : (
+                    <Button
+                        title="Confirmar cuenta"
+                        variant="primary"
+                        onPress={handleConfirm}
+                    />
+                )}
 
-            <Pressable
-                onPress={onGoLogin}
-                style={{ marginTop: 24 }}
-            >
-                <Text style={styles.linkText}>
-                    ← Volver a iniciar sesión
-                </Text>
-            </Pressable>
+                <Stack spacing="sm">
+                    <LinkText onPress={handleResendCode}>
+                        Reenviar código
+                    </LinkText>
 
-            <Pressable
-                onPress={onGoRegister}
-                style={{ marginTop: 8 }}
-            >
-                <Text style={styles.linkText}>
-                    Crear otra cuenta
-                </Text>
-            </Pressable>
+                    <LinkText onPress={onGoLogin}>
+                        ← Volver a iniciar sesión
+                    </LinkText>
 
-        </View>
-    );
+                    <LinkText onPress={onGoRegister}>
+                        Crear otra cuenta
+                    </LinkText>
+                </Stack>
+
+            </Stack>
+        </ScreenContainer>
+    )
+        ;
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 24,
-        justifyContent: 'center',
-    },
-    title: {
-        fontSize: 22,
-        fontWeight: '600',
-        textAlign: 'center',
-        marginBottom: 12,
-    },
-    subtitle: {
-        textAlign: 'center',
-        marginBottom: 24,
-        color: '#666',
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 12,
-        borderRadius: 8,
-        marginBottom: 12,
-    },
-    errorText: {
-        color: 'red',
-        marginBottom: 12,
-        textAlign: 'center',
-    },
-    successText: {
-        color: 'green',
-        marginBottom: 12,
-        textAlign: 'center',
-    },
-    linkText: {
-        textAlign: 'center',
-        color: '#1976D2',
-        fontWeight: '500',
-    },
-});
-
 

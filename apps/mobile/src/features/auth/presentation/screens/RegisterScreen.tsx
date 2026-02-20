@@ -1,16 +1,8 @@
 import { useState } from "react";
-import {
-    View,
-    Text,
-    TextInput,
-    Button,
-    StyleSheet,
-    ActivityIndicator,
-    Pressable,
-} from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import { register } from '../authSlice';
 import { useAppDispatch, useAppSelector } from "../../../../app/store/hooks";
-
+import { ScreenContainer, LinkText, Stack, Typography, Input, useTheme, Button } from '@petly/design-system';
 
 interface Props {
     onGoLogin?: () => void;
@@ -19,6 +11,7 @@ interface Props {
 
 export const RegisterScreen = ({ onGoLogin, onRegistered }: Props) => {
     const dispatch = useAppDispatch();
+    const theme = useTheme();
     const { loading, error } = useAppSelector(state => state.auth);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -57,83 +50,81 @@ export const RegisterScreen = ({ onGoLogin, onRegistered }: Props) => {
 
     };
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Crear cuenta</Text>
+        <ScreenContainer
+            style={{
+                padding: theme.spacing.lg,
+                justifyContent: 'center',
+            }}
+        >
+            <Stack spacing="lg">
 
-            <TextInput
-                style={styles.input}
-                placeholder="Nombre"
-                value={name}
-                onChangeText={setName}
-            />
+                <Typography
+                    variant="title"
+                    style={{ textAlign: 'center' }}
+                >
+                    Crear cuenta
+                </Typography>
 
-            <TextInput
-                style={styles.input}
-                placeholder="Email"
-                autoCapitalize="none"
-                keyboardType="email-address"
-                value={email}
-                onChangeText={setEmail}
-            />
+                <Stack spacing="sm">
+                    <Input
+                        placeholder="Nombre"
+                        value={name}
+                        onChangeText={setName}
+                    />
 
-            <TextInput
-                style={styles.input}
-                placeholder="Contraseña"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
-            />
+                    <Input
+                        placeholder="Email"
+                        autoCapitalize="none"
+                        keyboardType="email-address"
+                        value={email}
+                        onChangeText={setEmail}
+                    />
 
-            {localError && (
-                <Text style={styles.error}>{localError}</Text>
-            )}
+                    <Input
+                        placeholder="Contraseña"
+                        secureTextEntry
+                        value={password}
+                        onChangeText={setPassword}
+                    />
+                </Stack>
 
-            {error && (
-                <Text style={styles.error}>{error}</Text>
-            )}
+                {localError && (
+                    <Typography
+                        style={{
+                            color: theme.colors.error,
+                            textAlign: 'center',
+                        }}
+                    >
+                        {localError}
+                    </Typography>
+                )}
 
-            {loading ? (
-                <ActivityIndicator size="large" />
-            ) : (
-                <Button title="Registrarse" onPress={handleRegister} />
-            )}
+                {error && (
+                    <Typography
+                        style={{
+                            color: theme.colors.error,
+                            textAlign: 'center',
+                        }}
+                    >
+                        {error}
+                    </Typography>
+                )}
 
-            <Pressable onPress={onGoLogin} style={{ marginTop: 16 }}>
-                <Text style={styles.switchText}>
+                {loading ? (
+                    <ActivityIndicator />
+                ) : (
+                    <Button
+                        title="Registrarse"
+                        variant="primary"
+                        onPress={handleRegister}
+                    />
+                )}
+
+                <LinkText onPress={onGoLogin}>
                     ¿Ya tenés cuenta? Iniciar sesión
-                </Text>
-            </Pressable>
-        </View>
+                </LinkText>
+
+            </Stack>
+        </ScreenContainer>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 24,
-        justifyContent: 'center',
-    },
-    title: {
-        fontSize: 22,
-        marginBottom: 24,
-        textAlign: 'center',
-        fontWeight: '600',
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 12,
-        borderRadius: 8,
-        marginBottom: 12,
-    },
-    error: {
-        color: 'red',
-        marginBottom: 8,
-        textAlign: 'center',
-    },
-    switchText: {
-        textAlign: 'center',
-        color: '#1976D2',
-        fontWeight: '500',
-    },
-});
